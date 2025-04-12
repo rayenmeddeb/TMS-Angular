@@ -1,0 +1,90 @@
+<div class="user-management-container">
+    <header class="header">
+      <h1 class="title"><i class="fa-solid fa-users"></i>  Gestion des Utilisateurs</h1>
+      <button class="add-user-btn" (click)="openModal()">
+        <i class="fas fa-plus"></i> Ajouter Utilisateur
+      </button>
+    </header>
+  
+    <div class="user-table-container">
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+           
+            <th>Nom d'utilisateur</th>
+            <th>Email</th>
+            <th>Rôle</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>
+                <div
+                  class="user-icon"
+                  [ngStyle]="{ 'background-color': getColor(user.id) }"
+                >
+                  {{ getInitials(user) }}
+                </div>
+              </td>
+             
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <span class="role-badge" [ngClass]="{
+                'admin-badge': user.role === 'ADMIN',
+                'user-badge': user.role === 'USER'
+              }">
+                {{ user.role }}
+              </span>
+            </td>
+            <td class="actions">
+              <button class="edit-btn" (click)="editUser(user)">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="delete-btn" (click)="deleteUser(user.id)">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+  
+  <!-- Modal -->
+  <div *ngIf="showModal" class="modal d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5)">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form (ngSubmit)="saveUser()">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ selectedUser?.id ? 'Modifier' : 'Ajouter' }} un utilisateur</h5>
+            <button type="button" class="btn-close" (click)="closeModal()"></button>
+          </div>
+          <div class="modal-body">
+           
+            <div class="mb-3">
+              <label>Email</label>
+              <input type="email" class="form-control" [(ngModel)]="selectedUser.email" name="email" required />
+            </div>
+            <div class="mb-3" *ngIf="!selectedUser.id">
+              <label>Mot de passe</label>
+              <input type="password" class="form-control" [(ngModel)]="selectedUser.password" name="password" required />
+            </div>
+            <div class="mb-3">
+              <label>Rôle</label>
+              <select class="form-control" [(ngModel)]="selectedUser.role" name="role">
+                <option value="USER">Utilisateur</option>
+                <option value="ADMIN">Administrateur</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Enregistrer</button>
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

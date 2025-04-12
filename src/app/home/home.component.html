@@ -1,0 +1,14 @@
+<div class="home-container">
+    
+    <div class="cards-container">
+      <div *ngFor="let card of cards" 
+           class="card" 
+           [style.background-color]="card.color"
+           (click)="navigateTo(card.route)">
+        <div class="card-content">
+          <i [class]="card.icon"></i>
+          <h3>{{card.name}}</h3>
+        </div>
+      </div>
+    </div>
+  </div>

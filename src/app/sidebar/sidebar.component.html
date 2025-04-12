@@ -1,0 +1,27 @@
+<aside class="sidebar" [class.expanded]="isExpanded">
+    <div class="sidebar-content">
+      <div class="sidebar-menu">
+        <a class="menu-item" routerLink="/dashboard" routerLinkActive="active">
+          <mat-icon>dashboard</mat-icon>
+          <span class="menu-text">Dashboard</span>
+        </a>
+      
+        <a class="menu-item" routerLink="/calendar" routerLinkActive="active">
+          <mat-icon>people</mat-icon>
+          <span class="menu-text">Utilisateurs</span>
+        </a>
+        <a class="menu-item" routerLink="/messages" routerLinkActive="active">
+          <mat-icon>	person + directions_car</mat-icon>
+          <span class="menu-text">Chauffeurs</span>
+        </a>
+        <a class="menu-item" routerLink="/messages" routerLinkActive="active">
+          <mat-icon>	local_shipping</mat-icon>
+          <span class="menu-text">Camions</span>
+        </a>
+        <a class="menu-item" routerLink="/settings" routerLinkActive="active">
+          <mat-icon>settings</mat-icon>
+          <span class="menu-text">Settings</span>
+        </a>
+      </div>
+    </div>
+  </aside>

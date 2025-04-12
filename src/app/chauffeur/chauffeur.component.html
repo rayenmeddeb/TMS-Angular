@@ -1,0 +1,74 @@
+<!-- Liste des chauffeurs -->
+
+ <header class="header">
+  <h1 class="title">Gestion Des Chauffeurs</h1>
+  <button class="btn btn-primary" (click)="isAddEditPopupVisible = true"><i class="fa-solid fa-user-plus"></i>Ajouter Chauffeur</button>
+</header>
+<div class="chauffeur-list">
+  
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Photo</th>
+        <th>Nom</th>
+        <th>codeUnique</th>
+        <th>Email</th>
+        <th>Téléphone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let chauffeur of chauffeurs">
+        <td><img src="{{ chauffeur.photo }}" alt="{{ chauffeur.photo }}"></td>
+        <td>{{ chauffeur.nom }}</td>
+        <td>{{ chauffeur.codeUnique }}</td>
+        <td>{{ chauffeur.email }}</td>
+        <td>{{ chauffeur.telephone }}</td>
+        <td>
+          <button class="btn btn-info" (click)="viewDetails(chauffeur)"><i class="fa-solid fa-eye"></i></button>
+          <button class="btn btn-warning" (click)="onEdit(chauffeur)"><i class="fa-solid fa-pen-to-square"></i></button>
+          <button class="btn btn-danger" (click)="onDelete(chauffeur.id)"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Pop-up d'ajout/édition -->
+<div *ngIf="isAddEditPopupVisible" class="popup">
+  <div class="popup-content">
+    <h2>{{ selectedChauffeur ? 'Modifier Chauffeur' : 'Ajouter Chauffeur' }}</h2>
+    <form [formGroup]="chauffeurForm" (ngSubmit)="onSubmit()">
+      <label for="nom">Nom</label>
+      <input formControlName="nom" id="nom" required>
+      <label for="email">Code unique</label>
+      <input formControlName="codeUnique" id="codeUnique" required>
+      
+      <label for="email">Email</label>
+      <input formControlName="email" id="email" required>
+      
+      <label for="telephone">Téléphone</label>
+      <input formControlName="telephone" id="telephone" required>
+
+      <label for="photo">Photo</label>
+      <input type="file" (change)="onFileSelected($event)">
+
+      <button type="submit" class="btn btn-primary">Soumettre</button>
+      <button type="button" class="btn btn-secondary" (click)="closeAddEditPopup()">Annuler</button>
+    </form>
+  </div>
+</div>
+
+<!-- Pop-up des détails du chauffeur -->
+<div *ngIf="isDetailPopupVisible" class="popup">
+  <div class="popup-content">
+    <h2>Détails du Chauffeur</h2>
+    <p><strong>Nom:</strong> {{ selectedChauffeur.nom }}</p>
+    <p><strong>Email:</strong> {{ selectedChauffeur.email }}</p>
+    <p><strong>Téléphone:</strong> {{ selectedChauffeur.telephone }}</p>
+    <p><strong>Photo:</strong></p>
+    <img *ngIf="selectedChauffeur.photo" [src]="selectedChauffeur.photo" alt="photo" style="width: 150px;">
+    <button class="btn btn-secondary" (click)="closeDetailPopup()">Fermer</button>
+  </div>
+</div>

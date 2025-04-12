@@ -1,0 +1,162 @@
+body {
+    margin: 0;
+    background: #000000;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+  }
+  
+  .circular-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  .circular-loader {
+    position: absolute;
+    width: 550px; /* plus grand */
+    height: 550px; /* plus grand */
+    border-radius: 50%;
+    background: conic-gradient(
+      from 0deg,
+      #00e5ff 0deg,
+      #0a0a0a 40deg,
+      #0a0a0a 360deg
+    );
+    animation: rotateCircle 3s linear infinite;
+    z-index: 0;
+    mask: radial-gradient(farthest-side, transparent 62%, black 63%);
+    -webkit-mask: radial-gradient(farthest-side, transparent 62%, black 63%);
+    box-shadow: 0 0 60px rgba(0, 229, 255, 0.5);
+  }
+  
+  @keyframes rotateCircle {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .login-container {
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* S'assurer que l'écran prend toute la hauteur */
+  }
+  
+  .login-box {
+    width: 530px;  /* Réduit légèrement pour éviter que le contenu dépasse */
+    height: 530px; /* Hauteur égale à la largeur pour un cercle parfait */
+    border-radius: 50%; /* Rendre la boîte circulaire */
+    background: #000000;
+    padding: 40px;  /* Ajuster le padding pour que le contenu soit centré */
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* Assurez-vous que tout le contenu reste à l'intérieur */
+    flex-direction: column; /* Disposer les éléments verticalement */
+  }
+  
+  .logo-container {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  
+  .logo {
+    max-width: 180px;
+    height: auto;
+    filter: drop-shadow(0 0 5px rgba(33, 150, 243, 0.5));
+  }
+  
+  h2 {
+    text-align: center;
+    color: #2196f3;
+    margin-bottom: 30px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 24px;
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center; /* Centrer les éléments du formulaire */
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+    position: relative;
+    width: 100%;
+  }
+  
+  .form-group:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: #2196f3;
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  
+  .form-group:hover:before {
+    transform: scaleX(1);
+  }
+  
+  input {
+    width: 100%;
+    padding: 12px 0;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #333;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+  }
+  
+  input:focus {
+    border-bottom-color: #2196f3;
+  }
+  
+  .login-button {
+    background: #2196f3;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+  }
+  
+  .login-button:hover {
+    background: #1976d2;
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.8);
+  }
+  
+  .error-message {
+    margin-top: 20px;
+    padding: 10px;
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff5252;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 14px;
+    border: 1px solid rgba(255, 0, 0, 0.2);
+  }
+  
