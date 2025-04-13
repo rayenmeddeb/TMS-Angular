@@ -17,7 +17,13 @@
       
       <div class="user-profile">
         <span class="username">{{userName}}</span>
-        <img [src]="userAvatar" alt="User Avatar" class="avatar">
+        <div
+        class="user-icon"
+        [ngStyle]="{ 'background-color': getColor() }"
+      >
+        {{ getInitials() }}
+      </div>
+       
       </div>
     </div>
   </header>

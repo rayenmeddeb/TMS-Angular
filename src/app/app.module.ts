@@ -17,7 +17,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
+
+
 import { HomeComponent } from './home/home.component';
+
+
+
+
+// Font Awesome
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ArticleComponent } from './article/article.component';
+
 
 @NgModule({
   declarations: [
@@ -29,6 +39,8 @@ import { HomeComponent } from './home/home.component';
     NavbarComponent,
     SidebarComponent,
     HomeComponent,
+    ArticleComponent,
+    
    
    
   
@@ -40,9 +52,16 @@ import { HomeComponent } from './home/home.component';
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatIconModule,
+     MatIconModule,
     MatButtonModule,
     MatMenuModule,
+   
+  
+  
+   
+ 
+    // Font Awesome
+    FontAwesomeModule
 
   ],
  

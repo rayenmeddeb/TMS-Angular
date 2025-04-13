@@ -5,6 +5,7 @@ import { ChauffeurComponent } from './chauffeur/chauffeur.component';
 import { UtilisateurComponent } from './utilisateur/utilisateur.component';
 import { LayoutComponent } from './layout/layout.component';
 import { HomeComponent } from './home/home.component';
+import { ArticleComponent } from './article/article.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -15,6 +16,7 @@ const routes: Routes = [
     { path: 'home', component: HomeComponent },
     { path: 'chauffeur', component: ChauffeurComponent },
     { path: 'utilisateur', component: UtilisateurComponent },
+    { path: 'article', component: ArticleComponent },
     { path: '', redirectTo: 'home', pathMatch: 'full' } // route par défaut
   ]}
 ];

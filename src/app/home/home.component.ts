@@ -24,49 +24,49 @@ export class HomeComponent {
       name: 'Articles', 
       icon: 'fas fa-box-open fa-3x', 
       color: '#45B7D1', 
-      route: '/articles' 
+      route: '/layout/article' 
     },
     { 
       name: 'Utilisateurs', 
       icon: 'fas fa-users fa-3x', 
       color: '#FFA07A', 
-      route: '/utilisateurs' 
+      route: '/layout/utilisateur' 
     },
     { 
       name: 'Clients', 
       icon: 'fas fa-user-tie fa-3x', 
       color: '#98D8C8', 
-      route: '/clients' 
+      route: '/layout/client*' 
     },
     { 
       name: 'Chauffeurs', 
       icon: 'fas fa-user-astronaut fa-3x', 
       color: '#F06292', 
-      route: '/chauffeurs' 
+      route: '/layout/chauffeur' 
     },
     { 
       name: 'Camions', 
       icon: 'fas fa-truck fa-3x', 
       color: '#7986CB', 
-      route: '/camions' 
+      route: '/layout/camion' 
     },
     { 
       name: 'Map', 
       icon: 'fas fa-map fa-3x', 
       color: '#68ff33', 
-      route: '/map' 
+      route: '/layout/map' 
     },
     { 
       name: 'Sites', 
       icon: 'fas fa-map fa-3x', 
       color: '#5d65ec', 
-      route: '/site' 
+      route: '/layout/site' 
     },
     { 
       name: 'Planning', 
       icon: 'fas fa-table-list fa-3x', 
       color: '#f3eb49', 
-      route: '/planning' 
+      route: '/layout/planning' 
     }
 
   ];

@@ -1,0 +1,114 @@
+<div class="articles-management-container">
+    <div class="header-section">
+      <h2 class="page-title"><i class="fas fa-box-open"></i> Gestion des Articles</h2>
+      <button class="btn btn-add" (click)="openModal()">
+        <i class="fas fa-plus"></i> Ajouter Article
+      </button>
+    </div>
+  
+    <div class="table-responsive">
+      <table class="articles-table">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Libellé</th>
+            <th>PU</th>
+            <th>Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let article of articles">
+            <td>{{ article.artCode }}</td>
+            <td>{{ article.artLibL }}</td>
+            <td>{{ article.artPu | number:'1.2-2' }} DT</td>
+            <td>{{ article.artType }}</td>
+            
+            <td class="actions-cell">
+              <button class="btn btn-view" (click)="openDetails(article)">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="edit-btn" (click)="openModal(article)">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="delete-btn" (click)="deleteArticle(article.id!)">
+                <i class="fas fa-trash-alt"></i>
+              
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- MODAL FORM -->
+    <div class="custom-modal" [class.show]="showModal" *ngIf="showModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>{{ isEditMode ? 'Modifier' : 'Ajouter' }} un Article</h3>
+            <button class="close-btn" (click)="closeModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Code</label>
+                <input type="text" [(ngModel)]="selectedArticle!.artCode" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label>Libellé</label>
+                <input type="text" [(ngModel)]="selectedArticle!.artLibL" class="form-control" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Prix Unitaire</label>
+                <input type="number" [(ngModel)]="selectedArticle!.artPu" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label>Type</label>
+                <input type="text" [(ngModel)]="selectedArticle!.artType" class="form-control" />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-cancel" (click)="closeModal()">Annuler</button>
+            <button class="btn btn-save" (click)="saveArticle()">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- MODAL DETAILS -->
+    <div class="custom-modal" [class.show]="showDetails" *ngIf="showDetails">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Détails de l'article</h3>
+            <button class="close-btn" (click)="closeModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="detail-item">
+              <span class="detail-label">Code:</span>
+              <span class="detail-value">{{ selectedArticle?.artCode }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Libellé:</span>
+              <span class="detail-value">{{ selectedArticle?.artLibL }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">PU:</span>
+              <span class="detail-value">{{ selectedArticle?.artPu }} DT</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Type:</span>
+              <span class="detail-value">{{ selectedArticle?.artType }}</span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-close-details" (click)="closeModal()">Fermer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

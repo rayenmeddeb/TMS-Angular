@@ -25,7 +25,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
       this.authService.login(this.email, this.password).subscribe(
         (response) => {
           localStorage.setItem('token', response.token);
-          this.router.navigate(['/chauffeur']);
+          localStorage.setItem('username', response.username);
+          this.router.navigate(['/layout']);
           this.error = '';
           this.err = false;
         },
