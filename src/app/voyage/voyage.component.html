@@ -1,0 +1,128 @@
+<div class="card-header">
+  <div class="card-title">
+    <mat-icon>map</mat-icon>
+    Liste des Voyages
+  </div>
+  <div class="spacer"></div>
+</div>
+<table mat-table [dataSource]="voyages" class="camion-table">
+  <!-- Numero Voyage Column -->
+  <ng-container matColumnDef="numeroVoyage">
+    <th mat-header-cell *matHeaderCellDef>Numéro Voyage</th>
+    <td mat-cell *matCellDef="let voyage">{{ voyage.numeroVoyage }}</td>
+  </ng-container>
+
+  <!-- Kilometrage Total Column -->
+  <ng-container matColumnDef="kilometrageTotal">
+    <th mat-header-cell *matHeaderCellDef>Kilométrage Total (km)</th>
+    <td mat-cell *matCellDef="let voyage">{{ voyage.kilometrageTotal.toFixed(2) }}</td>
+  </ng-container>
+
+  <!-- Code Chauffeur Column -->
+  <ng-container matColumnDef="codeChauffeur">
+    <th mat-header-cell *matHeaderCellDef>Chauffeur</th>
+    <td mat-cell *matCellDef="let voyage">{{ voyage.codeChauffeur }}</td>
+  </ng-container>
+
+  <!-- Code Camion Column -->
+  <ng-container matColumnDef="codeCamion">
+    <th mat-header-cell *matHeaderCellDef>Camion</th>
+    <td mat-cell *matCellDef="let voyage">{{ voyage.codeCamion }}</td>
+  </ng-container>
+
+  <!-- Date Creation Column -->
+  <ng-container matColumnDef="dateCreation">
+    <th mat-header-cell *matHeaderCellDef>Date Création</th>
+    <td mat-cell *matCellDef="let voyage">{{ voyage.dateCreation | date:'short' }}</td>
+  </ng-container>
+
+  <!-- Ordres Count Column -->
+  <ng-container matColumnDef="ordresCount">
+    <th mat-header-cell *matHeaderCellDef>Nombre d'Ordres</th>
+    <td mat-cell *matCellDef="let voyage">{{ voyage.ordres.length }}</td>
+  </ng-container>
+
+  <!-- Actions Column -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let voyage">
+      <button mat-icon-button class="action-button view" (click)="openDetailsDialog(voyage)">
+        <mat-icon>visibility</mat-icon>
+      </button>
+      <button mat-icon-button class="action-button view" (click)="openMapDialog(voyage)">
+        <mat-icon>map</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+</table>
+
+<!-- Details Dialog Template -->
+<ng-template #detailsDialogTemplate let-data>
+  <div class="modal-content-box">
+    <div class="modal-header">
+      <h2 class="modal-title">Détails du Voyage: {{ data.numeroVoyage }}</h2>
+      <button mat-icon-button class="close-btn" mat-dialog-close>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="details-box">
+        <div class="details-content">
+          <p><strong>Kilométrage Total:</strong> {{ data.kilometrageTotal.toFixed(2) }} km</p>
+          <p><strong>Chauffeur:</strong> {{ data.codeChauffeur }}</p>
+          <p><strong>Camion:</strong> {{ data.codeCamion }}</p>
+          <p><strong>Date Création:</strong> {{ data.dateCreation | date:'short' }}</p>
+        </div>
+        <h3>Ordres</h3>
+        <table mat-table [dataSource]="data.ordres" class="camion-table">
+          <ng-container matColumnDef="numeroOrdre">
+            <th mat-header-cell *matHeaderCellDef>Numéro Ordre</th>
+            <td mat-cell *matCellDef="let ordre">{{ ordre.numeroOrdre }}</td>
+          </ng-container>
+          <ng-container matColumnDef="nbrepalette">
+            <th mat-header-cell *matHeaderCellDef>Nombre de Palettes</th>
+            <td mat-cell *matCellDef="let ordre">{{ ordre.nbrepalette || 0 }}</td>
+          </ng-container>
+          <ng-container matColumnDef="poid">
+            <th mat-header-cell *matHeaderCellDef>Poids (kg)</th>
+            <td mat-cell *matCellDef="let ordre">{{ (ordre.poid || 0) | number:'1.0-2' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="codearticle">
+            <th mat-header-cell *matHeaderCellDef>Code Article</th>
+            <td mat-cell *matCellDef="let ordre">{{ ordre.codearticle || '-' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="codeTiers">
+            <th mat-header-cell *matHeaderCellDef>Client</th>
+            <td mat-cell *matCellDef="let ordre">{{ ordre.codeTiers || '-' }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="['numeroOrdre', 'nbrepalette', 'poid', 'codearticle', 'codeTiers']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['numeroOrdre', 'nbrepalette', 'poid', 'codearticle', 'codeTiers'];" class="table-row"></tr>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button mat-button class="close-button" mat-dialog-close>Fermer</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Map Dialog Template -->
+<ng-template #mapDialogTemplate let-data>
+  <div class="modal-content-box">
+    <div class="modal-header">
+      <h2 class="modal-title">Carte du Voyage: {{ data.numeroVoyage }}</h2>
+      <button mat-icon-button class="close-btn" mat-dialog-close>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div id="map" style="height: 500px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button mat-button class="close-button" mat-dialog-close>Fermer</button>
+    </div>
+  </div>
+</ng-template>

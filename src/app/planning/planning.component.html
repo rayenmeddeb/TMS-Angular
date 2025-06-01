@@ -1,0 +1,55 @@
+
+  <h2 class="planning-title">Planning des Voyages</h2>
+
+  <div class="date-picker-container">
+    <label for="date-picker" class="date-label">Sélectionner une date :</label>
+    <input 
+      type="date" 
+      id="date-picker" 
+      [(ngModel)]="selectedDate" 
+      (change)="filterVoyagesByDate()"
+      class="date-input">
+  </div>
+
+  <div class="planning-table">
+    <table class="table">
+      <thead class="table-header">
+        <tr>
+          <th>Voyage</th>
+         
+          <th *ngFor="let hour of hours">{{ hour }}h</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let voyage of filteredVoyages" class="voyage-row">
+         {{ voyage.numeroVoyage }}
+          <ng-container *ngFor="let hour of hours; let i = index">
+            <td  style="background-color: rgb(0, 110, 255);" *ngIf="i === getOffsetHours(voyage)"
+                [attr.colspan]="getColSpan(voyage)"
+                class="voyage-bar"
+                [ngClass]="{'active': selectedVoyage === voyage}"
+                (click)="onVoyageClick(voyage)">
+              Voyage n°{{ voyage.numeroVoyage }}
+            </td>
+            <td *ngIf="i > getOffsetHours(voyage) && i < getOffsetHours(voyage) + getColSpan(voyage)" hidden></td>
+            <td *ngIf="i < getOffsetHours(voyage) || i >= getOffsetHours(voyage) + getColSpan(voyage)"></td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pop-up Modal -->
+  <div *ngIf="selectedVoyage" class="modal-overlay" (click)="selectedVoyage = null">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3 class="modal-title">Détails du Voyage {{ selectedVoyage.numeroVoyage }}</h3>
+      <div class="modal-body">
+        <p><strong>Chauffeur :</strong> {{ selectedVoyage.codeChauffeur || 'N/A' }}</p>
+        <p><strong>Camion :</strong> {{ selectedVoyage.codeCamion || 'N/A' }}</p>
+        <p><strong>Date de début :</strong> {{ selectedVoyage.dateCreation | date:'yyyy-MM-dd HH:mm' }}</p>
+        <p><strong>Date de fin :</strong> {{ selectedVoyage.endDate | date:'yyyy-MM-dd HH:mm' }}</p>
+        <p><strong>Durée :</strong> {{ selectedVoyage.tempsTotal || 'N/A' }} h</p>
+      </div>
+      <button class="modal-close-btn" (click)="selectedVoyage = null">Fermer</button>
+    </div>
+  </div>

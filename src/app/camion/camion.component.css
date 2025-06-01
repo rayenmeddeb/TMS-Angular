@@ -1,0 +1,224 @@
+
+.camion-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: white;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  background: linear-gradient(to right, #1e40af, #3b82f6);
+  color: white;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.search-field {
+  width: 400px;
+  margin-right: 2rem;
+  margin-top: 9px;
+}
+
+.add-button {
+  background: #10b981 !important;
+  color: white !important;
+  transition: transform 0.2s;
+}
+
+.add-button:hover {
+  transform: translateY(-2px);
+}
+
+.camion-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mat-header-cell {
+  background: #1e40af;
+  color: white;
+  font-weight: 600;
+  padding: 1rem;
+}
+
+.mat-cell {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table-row:hover {
+  background: #f8fafc;
+}
+
+.table-row.maintenance-row {
+  background-color: #ffcccb; /* Rouge clair pour les camions en maintenance */
+}
+
+.status-chip {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+}
+
+.status-chip.status-active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.status-chip.status-inactive {
+  background-color: #f44336;
+  color: white;
+}
+
+.status-chip.status-maintenance {
+  background-color: #ff9800;
+  color: white;
+}
+
+.action-button {
+  transition: background 0.2s;
+}
+
+.action-button.view:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.action-button.edit:hover {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.action-button.delete:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.modal-content-box {
+  background: white;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: #1e40af;
+  color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.close-btn {
+  color: white !important;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-field {
+  width: 100%;
+}
+
+.details-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.camion-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cancel-button,
+.close-button {
+  color: #1f2937 !important;
+}
+
+.save-button {
+  background: #1e40af !important;
+  color: white !important;
+}
+
+.save-button:hover {
+  background: #172554 !important;
+}

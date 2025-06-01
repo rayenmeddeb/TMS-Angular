@@ -1,0 +1,67 @@
+{
+    "ARTICLES.TITLE": "Gestion des Articles",
+    "ARTICLES.ADD_BUTTON": "Ajouter Article",
+    "ARTICLES.CODE": "Code",
+    "ARTICLES.LABEL": "Libellé",
+    "ARTICLES.PRICE": "Prix Unitaire",
+    "ARTICLES.TYPE": "Type",
+    "ARTICLES.ACTIONS": "Actions",
+    "ARTICLES.VIEW": "Voir",
+    "ARTICLES.EDIT": "Modifier",
+    "ARTICLES.DELETE": "Supprimer",
+    "ARTICLES.MODAL.ADD_TITLE": "Ajouter un Article",
+    "ARTICLES.MODAL.EDIT_TITLE": "Modifier un Article",
+    "ARTICLES.MODAL.CODE": "Code",
+    "ARTICLES.MODAL.LABEL": "Libellé",
+    "ARTICLES.MODAL.PRICE": "Prix Unitaire",
+    "ARTICLES.MODAL.TYPE": "Type",
+    "ARTICLES.MODAL.CANCEL": "Annuler",
+    "ARTICLES.MODAL.SAVE": "Enregistrer",
+    "ARTICLES.DETAILS.TITLE": "Détails de l'article",
+    "ARTICLES.DETAILS.CODE": "Code",
+    "ARTICLES.DETAILS.LABEL": "Libellé",
+    "ARTICLES.DETAILS.PRICE": "PU",
+    "ARTICLES.DETAILS.TYPE": "Type",
+    "ARTICLES.DETAILS.CLOSE": "Fermer",
+    
+    
+  "CAMIONS": {
+  "TITLE": "Gestion des Camions",
+  "ADD_BUTTON": "Ajouter Camion",
+  "SEARCH_PLACEHOLDER": "Chercher",
+  "TABLE": {
+    "ID": "ID",
+    "MATRICULE": "Code Entité",
+    "CATEGORY_CODE": "Code Catégorie",
+    "TYPE": "Type",
+    "BUYER": "Acheteur",
+    "STATUS": "Statut",
+    "PURCHASE_AMOUNT": "Montant Achat",
+    "ACTIONS": "Actions"
+  },
+  "MODAL": {
+    "ADD_TITLE": "Ajouter Camion",
+    "EDIT_TITLE": "Modifier Camion",
+    "VIEW_TITLE": "Détails du Camion",
+    "ENTITY_CODE": "Code Entité",
+    "CATEGORY_CODE": "Code Catégorie",
+    "ENTITY_TYPE": "Type Entité",
+    "BUYER": "Acheteur",
+    "STATUS": "Statut",
+    "PURCHASE_AMOUNT": "Montant Achat",
+    "SALE_AMOUNT": "Montant Vente",
+    "SAVE": "Enregistrer",
+    "CANCEL": "Annuler",
+    "CLOSE": "Fermer"
+  },
+  "DETAILS": {
+    "ID": "ID",
+    "ENTITY_CODE": "Code Entité",
+    "ENTITY_TYPE": "Type Entité",
+    "STATUS": "Statut",
+    "PURCHASE_AMOUNT": "Montant Achat",
+    "SALE_AMOUNT": "Montant Vente"
+  }
+}
+}
+  

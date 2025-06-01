@@ -1,0 +1,197 @@
+<mat-card class="ot-card">
+  <mat-card-header class="card-header">
+    <mat-card-title class="card-title">
+      <mat-icon>local_shipping</mat-icon>
+      {{ 'CAMIONS.TITLE' | translate }}
+    </mat-card-title>
+    <span class="spacer"></span>
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>{{ 'CAMIONS.SEARCH_PLACEHOLDER' | translate }}</mat-label>
+      <input matInput [(ngModel)]="searchTerm" name="searchTerm" (input)="filterCamions()">
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+    <button mat-raised-button class="add-button" (click)="openModal('add')">
+      <mat-icon>add</mat-icon>
+      {{ 'CAMIONS.ADD_BUTTON' | translate }}
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-table [dataSource]="filteredCamions" class="camion-table">
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef>{{ 'CAMIONS.TABLE.ID' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let camion">{{ camion.id }}</mat-cell>
+      </ng-container>
+
+      <!-- Entity Code Column -->
+      <ng-container matColumnDef="matricule">
+        <mat-header-cell *matHeaderCellDef>{{ 'CAMIONS.TABLE.MATRICULE' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let camion">{{ camion.matricule }}</mat-cell>
+      </ng-container>
+
+      <!-- Category Code Column -->
+      <ng-container matColumnDef="codeCategorie">
+        <mat-header-cell *matHeaderCellDef>{{ 'CAMIONS.TABLE.CATEGORY_CODE' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let camion">{{ camion.codeCategorie }}</mat-cell>
+      </ng-container>
+
+      <!-- Type Column -->
+      <ng-container matColumnDef="typeEntite">
+        <mat-header-cell *matHeaderCellDef>{{ 'CAMIONS.TABLE.TYPE' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let camion">{{ camion.typeEntite }}</mat-cell>
+      </ng-container>
+
+      <!-- Buyer Column -->
+      <ng-container matColumnDef="acheteur">
+        <mat-header-cell *matHeaderCellDef>{{ 'CAMIONS.TABLE.BUYER' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let camion">{{ camion.acheteur }}</mat-cell>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="statutEntite">
+        <mat-header-cell *matHeaderCellDef>{{ 'CAMIONS.TABLE.STATUS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let camion">
+          <span class="status-chip" [ngClass]="{
+            'status-active': camion.statutEntite === 'ACTIF',
+            'status-inactive': camion.statutEntite === 'NON_ACTIF',
+            'status-maintenance': camion.statutEntite === 'EN_MAINTENANCE'
+          }">
+            {{ camion.statutEntite }}
+          </span>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Purchase Amount Column -->
+      <ng-container matColumnDef="montantAchat">
+        <mat-header-cell *matHeaderCellDef>{{ 'CAMIONS.TABLE.PURCHASE_AMOUNT' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let camion">{{ camion.montantAchat }} DT</mat-cell>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>{{ 'CAMIONS.TABLE.ACTIONS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let camion">
+          <button mat-icon-button class="action-button view" (click)="openModal('view', camion)" matTooltip="{{ 'CAMIONS.ACTIONS.VIEW' | translate }}">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button class="action-button edit" (click)="openModal('edit', camion)" matTooltip="{{ 'CAMIONS.ACTIONS.EDIT' | translate }}">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button class="action-button delete" (click)="deleteCamion(camion.id!)" matTooltip="{{ 'CAMIONS.ACTIONS.DELETE' | translate }}">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="['id', 'matricule', 'codeCategorie', 'typeEntite', 'acheteur', 'statutEntite', 'montantAchat', 'actions']"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: ['id', 'matricule', 'codeCategorie', 'typeEntite', 'acheteur', 'statutEntite', 'montantAchat', 'actions'];" 
+               class="table-row" [ngClass]="{'maintenance-row': row.statutEntite === 'EN_MAINTENANCE'}"></mat-row>
+    </mat-table>
+  </mat-card-content>
+
+  <!-- Modal -->
+  <div class="modal" *ngIf="modalType" tabindex="-1">
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-content-box" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h5 class="modal-title" *ngIf="modalType === 'add'">{{ 'CAMIONS.MODAL.ADD_TITLE' | translate }}</h5>
+          <h5 class="modal-title" *ngIf="modalType === 'edit'">{{ 'CAMIONS.MODAL.EDIT_TITLE' | translate }}</h5>
+          <h5 class="modal-title" *ngIf="modalType === 'view'">{{ 'CAMIONS.MODAL.VIEW_TITLE' | translate }}</h5>
+          <button mat-icon-button class="close-btn" (click)="closeModal()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <form *ngIf="modalType !== 'view'" class="modal-form" #truckFormRef="ngForm">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>{{ 'CAMIONS.MODAL.MATRICULE' | translate }}</mat-label>
+              <input matInput [(ngModel)]="newCamion.matricule" name="matricule" required #matricule="ngModel">
+              <mat-error *ngIf="matricule.invalid && (matricule.touched || matricule.dirty)">
+                {{ 'CAMIONS.MODAL.REQUIRED' | translate }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>{{ 'CAMIONS.MODAL.CATEGORY_CODE' | translate }}</mat-label>
+              <input matInput [(ngModel)]="newCamion.codeCategorie" name="codeCategorie" required #codeCategorie="ngModel">
+              <mat-error *ngIf="codeCategorie.invalid && (codeCategorie.touched || codeCategorie.dirty)">
+                {{ 'CAMIONS.MODAL.REQUIRED' | translate }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>{{ 'CAMIONS.MODAL.ENTITY_TYPE' | translate }}</mat-label>
+              <input matInput [(ngModel)]="newCamion.typeEntite" name="typeEntite" required #typeEntite="ngModel">
+              <mat-error *ngIf="typeEntite.invalid && (typeEntite.touched || typeEntite.dirty)">
+                {{ 'CAMIONS.MODAL.REQUIRED' | translate }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>{{ 'CAMIONS.MODAL.BUYER' | translate }}</mat-label>
+              <input matInput [(ngModel)]="newCamion.acheteur" name="acheteur" required #acheteur="ngModel">
+              <mat-error *ngIf="acheteur.invalid && (acheteur.touched || acheteur.dirty)">
+                {{ 'CAMIONS.MODAL.REQUIRED' | translate }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>{{ 'CAMIONS.MODAL.STATUS' | translate }}</mat-label>
+              <mat-select [(ngModel)]="newCamion.statutEntite" name="statutEntite" required #statutEntite="ngModel">
+                <mat-option value="ACTIF">ACTIF</mat-option>
+                <mat-option value="NON_ACTIF">NON_ACTIF</mat-option>
+                <mat-option value="EN_MAINTENANCE">EN_MAINTENANCE</mat-option>
+              </mat-select>
+              <mat-error *ngIf="statutEntite.invalid && (statutEntite.touched || statutEntite.dirty)">
+                {{ 'CAMIONS.MODAL.REQUIRED' | translate }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>{{ 'CAMIONS.MODAL.PURCHASE_AMOUNT' | translate }}</mat-label>
+              <input matInput type="number" [(ngModel)]="newCamion.montantAchat" name="montantAchat" required #montantAchat="ngModel">
+              <mat-error *ngIf="montantAchat.invalid && (montantAchat.touched || montantAchat.dirty)">
+                {{ 'CAMIONS.MODAL.REQUIRED' | translate }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>{{ 'CAMIONS.MODAL.SALE_AMOUNT' | translate }}</mat-label>
+              <input matInput type="number" [(ngModel)]="newCamion.montantVente" name="montantVente" #montantVente="ngModel">
+            </mat-form-field>
+          </form>
+
+          <div *ngIf="modalType === 'view'" class="details-box">
+            <img [src]="getCamionImage(selectedCamion?.typeEntite)" alt="Camion" class="camion-img" />
+            <div class="details-content">
+              <p><strong>{{ 'CAMIONS.DETAILS.ID' | translate }}:</strong> {{ selectedCamion?.id }}</p>
+              <p><strong>{{ 'CAMIONS.DETAILS.MATRICULE' | translate }}:</strong> {{ selectedCamion?.matricule }}</p>
+              <p><strong>{{ 'CAMIONS.DETAILS.ENTITY_TYPE' | translate }}:</strong> {{ selectedCamion?.typeEntite }}</p>
+              <p><strong>{{ 'CAMIONS.DETAILS.STATUS' | translate }}:</strong>
+                <span class="status-chip" [ngClass]="{
+                  'status-active': selectedCamion?.statutEntite === 'ACTIF',
+                  'status-inactive': selectedCamion?.statutEntite === 'NON_ACTIF',
+                  'status-maintenance': selectedCamion?.statutEntite === 'EN_MAINTENANCE'
+                }">
+                  {{ selectedCamion?.statutEntite }}
+                </span>
+              </p>
+              <p><strong>{{ 'CAMIONS.DETAILS.PURCHASE_AMOUNT' | translate }}:</strong> {{ selectedCamion?.montantAchat }} DT</p>
+              <p><strong>{{ 'CAMIONS.DETAILS.SALE_AMOUNT' | translate }}:</strong> {{ selectedCamion?.montantVente }} DT</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button mat-button class="cancel-button" *ngIf="modalType !== 'view'" (click)="closeModal()">{{ 'CAMIONS.MODAL.CANCEL' | translate }}</button>
+          <button mat-raised-button class="save-button" *ngIf="modalType !== 'view'" (click)="saveCamion()" [disabled]="truckForm?.invalid">
+            {{ 'CAMIONS.MODAL.SAVE' | translate }}
+          </button>
+          <button mat-button class="close-button" *ngIf="modalType === 'view'" (click)="closeModal()">{{ 'CAMIONS.MODAL.CLOSE' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-card>

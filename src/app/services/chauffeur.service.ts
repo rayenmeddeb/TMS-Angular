@@ -1,18 +1,16 @@
-// src/app/services/chauffeur.service.ts
-
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Chauffeur } from '../models/chauffeur.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChauffeurService {
-  private apiUrl = 'http://localhost:8082/api/chauffeurs'; // ➤ À adapter si besoin
+  private apiUrl = 'http://localhost:8023/api/chauffeurs';
 
   constructor(private http: HttpClient) {}
 
-  // 🔐 Récupérer les headers avec le token JWT
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
@@ -20,43 +18,44 @@ export class ChauffeurService {
     });
   }
 
-  // ✅ Obtenir tous les chauffeurs (authentifié)
-  getAllChauffeurs(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl, {
+  getAllChauffeurs(): Observable<Chauffeur[]> {
+    return this.http.get<Chauffeur[]>(this.apiUrl, {
       headers: this.getHeaders(),
     });
   }
 
-  // ✅ Obtenir un chauffeur par son ID (authentifié)
-  getChauffeurById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`, {
+  getChauffeurById(id: number): Observable<Chauffeur> {
+    return this.http.get<Chauffeur>(`${this.apiUrl}/${id}`, {
       headers: this.getHeaders(),
     });
   }
 
-  // ✅ Ajouter un chauffeur avec une photo (authentifié)
-  addChauffeur(chauffeurData: any, photo: File): Observable<any> {
-    const formData = new FormData();
-    formData.append('chauffeur', JSON.stringify(chauffeurData));
-    formData.append('photo', photo);
-
-    // ⚠️ Ne pas définir manuellement le Content-Type pour FormData
-    return this.http.post(this.apiUrl, formData, {
+  addChauffeur(chauffeurData: Chauffeur): Observable<Chauffeur> {
+    return this.http.post<Chauffeur>(`${this.apiUrl}/ajout`, chauffeurData, {
       headers: this.getHeaders(),
     });
   }
 
-  // ✅ Mettre à jour un chauffeur (authentifié)
   updateChauffeur(id: number, chauffeur: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, chauffeur, {
       headers: this.getHeaders(),
     });
   }
 
-  // ✅ Supprimer un chauffeur (authentifié)
   deleteChauffeur(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, {
       headers: this.getHeaders(),
+    });
+  }
+
+  filtrerChauffeurs(codeSite: string, tempsConduite: number, dateDeVoyage: string): Observable<Chauffeur[]> {
+    let params = new HttpParams()
+      .set('codeSite', codeSite)
+      .set('tempsConduite', tempsConduite.toString())
+      .set('dateDeVoyage', dateDeVoyage);
+    return this.http.get<Chauffeur[]>(`${this.apiUrl}/filtrer`, {
+      headers: this.getHeaders(),
+      params,
     });
   }
 }

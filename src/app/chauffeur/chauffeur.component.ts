@@ -1,106 +1,146 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { ChauffeurService } from '../services/chauffeur.service';
+import { Chauffeur } from '../models/chauffeur.model';
 
 @Component({
   selector: 'app-chauffeur',
   templateUrl: './chauffeur.component.html',
-  styleUrls: ['./chauffeur.component.css']
+  styleUrls: ['./chauffeur.component.css'],
 })
 export class ChauffeurComponent implements OnInit {
   chauffeurForm!: FormGroup;
-  chauffeurs: any[] = [];
-  selectedChauffeur: any = null;
-  selectedFile: File | null = null;
-  isAddEditPopupVisible: boolean = false; // Pour gérer la visibilité du pop-up d'ajout/édition
-  isDetailPopupVisible: boolean = false; // Pour gérer la visibilité du pop-up de détails
+  searchForm!: FormGroup; // Added for search
+  chauffeurs: Chauffeur[] = [];
+  filteredChauffeurs: Chauffeur[] = []; // Added for filtered data
+  selectedChauffeur: Chauffeur | null = null;
+  isAddEditPopupVisible: boolean = false;
+  isDetailPopupVisible: boolean = false;
+  statutOptions: string[] = ['ACTIF', 'NON_ACTIF', 'EN_CONGE'];
 
   constructor(
     private fb: FormBuilder,
-    private chauffeurService: ChauffeurService,
-    private router: Router
+    private chauffeurService: ChauffeurService
   ) {}
 
   ngOnInit(): void {
-    this.chauffeurForm = this.fb.group({
-      id: [null],
-      nom: ['', Validators.required],
-      codeUnique: ['', Validators.required],
-      telephone: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      photo: [null]
-    });
-
-    this.getChauffeurs(); // Charger la liste des chauffeurs
+    this.initializeForms();
+    this.getChauffeurs();
   }
 
-  // Récupérer tous les chauffeurs
+  initializeForms(): void {
+    // Chauffeur form
+    this.chauffeurForm = this.fb.group({
+      id: [null],
+      codeUnique: ['', [Validators.required, Validators.minLength(8)]],
+      nom: ['', [Validators.required, Validators.minLength(2)]],
+      villeResidence: ['', Validators.required],
+      codeService: ['', Validators.required],
+      codeSite: ['', Validators.required],
+      dateEntree: ['', Validators.required],
+      dateNaissance: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      telephone: ['', [Validators.required, Validators.pattern(/^\+?\d{10,15}$/)]],
+      telephoneProfessionnel: [''],
+      identifiantExterne: [''],
+      adresse: ['', Validators.required],
+      adresseComplementaire: [''],
+      codePostal: ['', [Validators.required, Validators.pattern(/^\d{5}$/)]],
+      typeEmploi: ['', Validators.required],
+      statut: ['', Validators.required],
+      situationProfessionnelle: [''],
+      numeroPermis: ['', [Validators.required, Validators.minLength(5)]],
+      kilometrageParcouru: [0, [Validators.required, Validators.min(0)]],
+    });
+
+    // Search form
+    this.searchForm = this.fb.group({
+      searchQuery: [''],
+    });
+
+    // Subscribe to search query changes
+    this.searchForm.get('searchQuery')?.valueChanges.subscribe((query) => {
+      this.filterChauffeurs(query);
+    });
+  }
+
   getChauffeurs(): void {
     this.chauffeurService.getAllChauffeurs().subscribe({
       next: (data) => {
-        this.chauffeurs = data;
-        for (let a of this.chauffeurs) {
-          a.photo = a.photo.slice(43); // Modifier le chemin de la photo si nécessaire
-        }
+        this.chauffeurs = data.map(chauffeur => ({
+          ...chauffeur,
+          photo: chauffeur.photo ? `http://localhost:8023/${chauffeur.photo.slice(43)}` : null,
+        }));
+        this.filteredChauffeurs = [...this.chauffeurs]; // Initialize filtered data
       },
       error: (err) => {
         console.error('Erreur lors du chargement des chauffeurs', err);
-      }
+        alert('Erreur lors du chargement des chauffeurs');
+      },
     });
   }
 
-  // Sélectionner un chauffeur pour la mise à jour
-  onEdit(chauffeur: any): void {
+  filterChauffeurs(query: string): void {
+    const lowerQuery = query.toLowerCase().trim();
+    if (!lowerQuery) {
+      this.filteredChauffeurs = [...this.chauffeurs];
+      return;
+    }
+
+    this.filteredChauffeurs = this.chauffeurs.filter(chauffeur =>
+      (chauffeur.nom?.toLowerCase().includes(lowerQuery) ||
+       chauffeur.codeUnique?.toLowerCase().includes(lowerQuery) ||
+       chauffeur.codeSite?.toLowerCase().includes(lowerQuery))
+    );
+  }
+
+  onEdit(chauffeur: Chauffeur): void {
     this.selectedChauffeur = chauffeur;
-    this.chauffeurForm.patchValue(chauffeur);
-    this.isAddEditPopupVisible = true; // Afficher le pop-up d'édition
+    this.chauffeurForm.patchValue({
+      ...chauffeur,
+      dateEntree: chauffeur.dateEntree ? new Date(chauffeur.dateEntree).toISOString().split('T')[0] : '',
+      dateNaissance: chauffeur.dateNaissance ? new Date(chauffeur.dateNaissance).toISOString().split('T')[0] : '',
+    });
+    this.isAddEditPopupVisible = true;
   }
 
-  // Sélectionner un fichier photo
-  onFileSelected(event: any): void {
-    this.selectedFile = event.target.files[0];
-  }
-
-  // Ajouter ou mettre à jour un chauffeur
   onSubmit(): void {
-    if (this.chauffeurForm.invalid || !this.selectedFile) {
-      alert('Veuillez remplir tous les champs et ajouter une photo');
+    if (this.chauffeurForm.invalid) {
+      this.chauffeurForm.markAllAsTouched();
+      alert('Veuillez remplir tous les champs requis correctement');
       return;
     }
 
     const chauffeurData = this.chauffeurForm.value;
 
     if (chauffeurData.id) {
-      // Mise à jour du chauffeur
       this.chauffeurService.updateChauffeur(chauffeurData.id, chauffeurData).subscribe({
         next: () => {
           alert('Chauffeur mis à jour avec succès');
           this.getChauffeurs();
-          this.chauffeurForm.reset();
-          this.isAddEditPopupVisible = false; // Fermer le pop-up
+          this.resetForm();
         },
         error: (err) => {
           console.error('Erreur lors de la mise à jour du chauffeur', err);
-        }
+          alert('Erreur lors de la mise à jour du chauffeur');
+        },
       });
     } else {
-      // Création du chauffeur
-      this.chauffeurService.addChauffeur(chauffeurData, this.selectedFile!).subscribe({
+      console.log('Sending chauffeurData:', chauffeurData);
+      this.chauffeurService.addChauffeur(chauffeurData).subscribe({
         next: () => {
           alert('Chauffeur ajouté avec succès');
           this.getChauffeurs();
-          this.chauffeurForm.reset();
-          this.isAddEditPopupVisible = false; // Fermer le pop-up
+          this.resetForm();
         },
         error: (err) => {
           console.error('Erreur lors de l\'ajout du chauffeur', err);
-        }
+          alert('Erreur lors de l\'ajout du chauffeur');
+        },
       });
     }
   }
 
-  // Supprimer un chauffeur
   onDelete(id: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce chauffeur ?')) {
       this.chauffeurService.deleteChauffeur(id).subscribe({
@@ -110,26 +150,30 @@ export class ChauffeurComponent implements OnInit {
         },
         error: (err) => {
           console.error('Erreur lors de la suppression du chauffeur', err);
-        }
+          alert('Erreur lors de la suppression du chauffeur');
+        },
       });
     }
   }
 
-  // Afficher les détails d'un chauffeur dans un pop-up
-  viewDetails(chauffeur: any): void {
+  viewDetails(chauffeur: Chauffeur): void {
     this.selectedChauffeur = chauffeur;
-    this.isDetailPopupVisible = true; // Afficher le pop-up de détails
+    this.isDetailPopupVisible = true;
   }
 
-  // Fermer le pop-up de détails
   closeDetailPopup(): void {
     this.isDetailPopupVisible = false;
-    this.selectedChauffeur = null; // Réinitialiser le chauffeur sélectionné
+    this.selectedChauffeur = null;
   }
 
-  // Fermer le pop-up d'ajout/édition
   closeAddEditPopup(): void {
     this.isAddEditPopupVisible = false;
+    this.resetForm();
+  }
+
+  private resetForm(): void {
     this.chauffeurForm.reset();
+    this.selectedChauffeur = null;
+    this.isAddEditPopupVisible = false;
   }
 }

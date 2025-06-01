@@ -1,0 +1,18 @@
+<div class="language-selector">
+    <div class="selected-option" (click)="toggleOptions()">
+      <img [src]="'assets/' + getFlagImage(currentLanguage)" alt="" class="flag-icon">
+      <span>{{ currentLanguage === 'fr' ? 'Français' : 'English' }}</span>
+      <span class="arrow">▼</span>
+    </div>
+    
+    <div class="options" *ngIf="showOptions">
+      <div class="option" (click)="selectLanguage('fr')">
+        <img src="assets/téléchargement (1).jpg" alt="Français" class="flag-icon">
+        Français
+      </div>
+      <div class="option" (click)="selectLanguage('en')">
+        <img src="assets/téléchargement.jpg" alt="English" class="flag-icon">
+        English
+      </div>
+    </div>
+  </div>

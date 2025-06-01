@@ -7,16 +7,22 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
   private apiUrl = 'http://localhost:8082/users';
+  
 
   constructor(private http: HttpClient) {}
 
-  private getHeaders() {
+   getHeaders() {
     const token = localStorage.getItem('token');
     return {
       headers: new HttpHeaders({
         Authorization: `Bearer ${token}`,
       }),
     };
+  }
+
+  getUserByUsername(username: string): Observable<any> {
+    
+    return this.http.get<any>(`${this.apiUrl}/${username}`, this.getHeaders());
   }
 
   getAllUsers(): Observable<any[]> {

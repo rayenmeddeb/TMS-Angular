@@ -1,22 +1,42 @@
 <aside class="sidebar" [class.expanded]="isExpanded">
     <div class="sidebar-content">
       <div class="sidebar-menu">
-        <a class="menu-item" routerLink="/dashboard" routerLinkActive="active">
+        <a class="menu-item" routerLink="/layout" routerLinkActive="active">
           <mat-icon>dashboard</mat-icon>
           <span class="menu-text">Dashboard</span>
         </a>
       
-        <a class="menu-item" routerLink="/calendar" routerLinkActive="active">
+        <a class="menu-item" routerLink="/layout/utilisateur" routerLinkActive="active">
           <mat-icon>people</mat-icon>
           <span class="menu-text">Utilisateurs</span>
         </a>
-        <a class="menu-item" routerLink="/messages" routerLinkActive="active">
+        <a class="menu-item" routerLink="/layout/chauffeur" routerLinkActive="active">
           <mat-icon>	person + directions_car</mat-icon>
           <span class="menu-text">Chauffeurs</span>
         </a>
-        <a class="menu-item" routerLink="/messages" routerLinkActive="active">
+        <a class="menu-item" routerLink="/layout/camion" routerLinkActive="active">
           <mat-icon>	local_shipping</mat-icon>
           <span class="menu-text">Camions</span>
+        </a>
+        <a class="menu-item" routerLink="/layout/client" routerLinkActive="active">
+          <i class="fas fa-user-tie" id="i"></i>
+          <span class="menu-text">Client</span>
+        </a>
+        <a class="menu-item" routerLink="/layout/OT" routerLinkActive="active">
+          <mat-icon>assignment</mat-icon> 
+          <span class="menu-text">OT</span>
+        </a>
+        <a class="menu-item" routerLink="/layout/article" routerLinkActive="active">
+          <mat-icon>shopping_bag</mat-icon>
+          <span class="menu-text">Articles</span>
+        </a>
+        <a class="menu-item" routerLink="/layout/site" routerLinkActive="active">
+          <mat-icon>location_on</mat-icon>
+          <span class="menu-text">Sites</span>
+        </a>
+        <a class="menu-item" routerLink="/layout/tourne" routerLinkActive="active">
+          <mat-icon>track_changes</mat-icon>
+          <span class="menu-text">Tournes</span>
         </a>
         <a class="menu-item" routerLink="/settings" routerLinkActive="active">
           <mat-icon>settings</mat-icon>

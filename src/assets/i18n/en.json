@@ -1,0 +1,70 @@
+{
+    "ARTICLES.TITLE": "Articles Management",
+    "ARTICLES.ADD_BUTTON": "Add Article",
+    "ARTICLES.CODE": "Code",
+    "ARTICLES.LABEL": "Label",
+    "ARTICLES.PRICE": "Unit Price",
+    "ARTICLES.TYPE": "Type",
+    "ARTICLES.ACTIONS": "Actions",
+    "ARTICLES.VIEW": "View",
+    "ARTICLES.EDIT": "Edit",
+    "ARTICLES.DELETE": "Delete",
+    "ARTICLES.MODAL.ADD_TITLE": "Add an Article",
+    "ARTICLES.MODAL.EDIT_TITLE": "Edit an Article",
+    "ARTICLES.MODAL.CODE": "Code",
+    "ARTICLES.MODAL.LABEL": "Label",
+    "ARTICLES.MODAL.PRICE": "Unit Price",
+    "ARTICLES.MODAL.TYPE": "Type",
+    "ARTICLES.MODAL.CANCEL": "Cancel",
+    "ARTICLES.MODAL.SAVE": "Save",
+    "ARTICLES.DETAILS.TITLE": "Article Details",
+    "ARTICLES.DETAILS.CODE": "Code",
+    "ARTICLES.DETAILS.LABEL": "Label",
+    "ARTICLES.DETAILS.PRICE": "PU",
+    "ARTICLES.DETAILS.TYPE": "Type",
+    "ARTICLES.DETAILS.CLOSE": "Close",
+"CAMIONS": {
+    "TITLE": "Truck Management",
+    "ADD_BUTTON": "Add Truck",
+     "SEARCH_PLACEHOLDER": "Search",
+    "TABLE": {
+      "ID": "ID",
+      "MATRICULE": "Entity Code",
+      "CATEGORY_CODE": "Category Code",
+      "TYPE": "Type",
+      "BUYER": "Buyer",
+      "STATUS": "Status",
+      "PURCHASE_AMOUNT": "Purchase Amount",
+      "ACTIONS": "Actions"
+    },
+    "MODAL": {
+      "ADD_TITLE": "Add Truck",
+      "EDIT_TITLE": "Edit Truck",
+      "VIEW_TITLE": "Truck Details",
+      "ENTITY_CODE": "Entity Code",
+      "CATEGORY_CODE": "Category Code",
+      "ENTITY_TYPE": "Entity Type",
+      "BUYER": "Buyer",
+      "STATUS": "Status",
+      "PURCHASE_AMOUNT": "Purchase Amount",
+      "SALE_AMOUNT": "Sale Amount",
+      "SAVE": "Save",
+      "CANCEL": "Cancel",
+      "CLOSE": "Close"
+    },
+    "DETAILS": {
+      "ID": "ID",
+      "ENTITY_CODE": "Entity Code",
+      "ENTITY_TYPE": "Entity Type",
+      "STATUS": "Status",
+      "PURCHASE_AMOUNT": "Purchase Amount",
+      "SALE_AMOUNT": "Sale Amount"
+    }
+  }
+  
+
+
+
+  }
+  
+  

@@ -1,268 +1,186 @@
-/* Main Container */
-.articles-management-container {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  /* Header Section */
-  .header-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  .page-title {
-    color: #2c3e50;
-    font-weight: 600;
-    margin: 0;
-  }
-  
-  .btn-add {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .btn-add:hover {
-    background-color: #2980b9;
-  }
-  
-  /* Table Styles */
-  .table-responsive {
-    overflow-x: auto;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-  
-  .articles-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-  }
-  
-  .articles-table thead {
-    background-color: #001bb4;
-    color: white;
-  }
-  
-  .articles-table th, 
-  .articles-table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #ecf0f1;
-  }
-  
-  .articles-table th {
-    font-weight: 600;
-  }
-  
-  .articles-table tbody tr:hover {
-    background-color: #f8f9fa;
-  }
-  
-  /* Actions Cell */
-  .actions-cell {
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .btn-view, .btn-edit, .btn-delete {
-    padding: 0.4rem 0.8rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: opacity 0.3s;
-  }
-  
-  .btn-view {
-    background-color: #17a2b8;
-    color: white;
-  }
-  
-  .actions {
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .edit-btn, .delete-btn {
-    border: none;
-    border-radius: 6px;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .edit-btn {
-    background-color: #fffd88;
-    color: #ff6600;
-  }
-  
-  .edit-btn:hover {
-    background-color: #60a5fa;
-    transform: translateY(-2px);
-  }
-  
-  .delete-btn {
-    background-color: #fecaca;
-    color: #b91c1c;
-  }
-  
-  .delete-btn:hover {
-    background-color: #fca5a5;
-    transform: translateY(-2px);
-  }
-  
-  /* Modal Styles */
-  .custom-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+.articles-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: white;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  background: linear-gradient(to right, #1e40af, #3b82f6);
+  color: white;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.add-button {
+  background: #10b981 !important;
+  color: white !important;
+  transition: transform 0.2s;
+}
+
+.add-button:hover {
+  transform: translateY(-2px);
+}
+
+.articles-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mat-header-cell {
+  background: #1e40af;
+  color: white;
+  font-weight: 600;
+  padding: 1rem;
+}
+
+.mat-cell {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table-row:hover {
+  background: #f8fafc;
+}
+
+.action-button {
+  transition: background 0.2s;
+}
+
+.action-button.view:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.action-button.edit:hover {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.action-button.delete:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.modal-content-box {
+  background: white;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
     opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s;
   }
-  
-  .custom-modal.show {
+  to {
+    transform: translateY(0);
     opacity: 1;
-    visibility: visible;
   }
-  
-  .modal-dialog {
-    width: 100%;
-    max-width: 800px;
-    margin: 1rem;
-  }
-  
-  .modal-content {
-    background-color: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  }
-  
-  .modal-header {
-    padding: 1.5rem;
-    background-color: #3498db;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .modal-header h3 {
-    margin: 0;
-    font-weight: 600;
-  }
-  
-  .close-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-  }
-  
-  .modal-body {
-    padding: 1.5rem;
-  }
-  
-  .form-row {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-  
-  .form-group {
-    flex: 1;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #2c3e50;
-    font-weight: 500;
-  }
-  
-  .form-control {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
-  
-  .form-control:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-  }
-  
-  .modal-footer {
-    padding: 1rem 1.5rem;
-    background-color: #f8f9fa;
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-  }
-  
-  .btn-cancel, .btn-save, .btn-close-details {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .btn-cancel, .btn-close-details {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-  }
-  
-  .btn-save {
-    background-color: #28a745;
-    color: white;
-    border: none;
-  }
-  
-  .btn-cancel:hover, .btn-close-details:hover {
-    background-color: #5a6268;
-  }
-  
-  .btn-save:hover {
-    background-color: #218838;
-  }
-  
-  /* Details Modal */
-  .detail-item {
-    margin-bottom: 1rem;
-    display: flex;
-  }
-  
-  .detail-label {
-    font-weight: 600;
-    color: #2c3e50;
-    min-width: 100px;
-  }
-  
-  .detail-value {
-    color: #7f8c8d;
-  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: #1e40af;
+  color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.close-btn {
+  color: white !important;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-field {
+  width: 100%;
+}
+
+.details-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cancel-button,
+.close-button {
+  color: #1f2937 !important;
+}
+
+.save-button {
+  background: #1e40af !important;
+  color: white !important;
+}
+
+.save-button:hover {
+  background: #172554 !important;
+}

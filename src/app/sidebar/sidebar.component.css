@@ -37,20 +37,24 @@
   
       &:hover {
         background-color: rgba(33, 150, 243, 0.1);
-        color: #2196F3;
+        color: #1e40af;
       }
   
       &.active {
         background: rgba(33, 150, 243, 0.2);
-        color: #2196F3;
-        border-right: 3px solid #2196F3;
+        color: #1e40af;
+        border-right: 3px solid #1e40af;
       }
   
-      mat-icon {
+      mat-icon  {
         margin-right: 15px;
         flex-shrink: 0;
       }
   
+      #i  {
+        margin-right: 18px;
+        flex-shrink: 0;
+      }
       .menu-text {
         opacity: 0;
         transition: opacity 0.2s ease;

@@ -1,0 +1,126 @@
+
+      <mat-card-header class="card-header">
+        <mat-card-title class="card-title">
+          <mat-icon>location_city</mat-icon>
+          Liste des Sites
+        </mat-card-title>
+        <button mat-raised-button class="add-button" (click)="openForm()">
+          <mat-icon>add</mat-icon>
+          Ajouter un site
+        </button>
+      </mat-card-header>
+      <mat-card-content class="site-content">
+        <div class="layout-container">
+          <!-- Table on the Left -->
+          <div class="table-container">
+            <mat-table [dataSource]="sitesDataSource" class="site-table">
+              <!-- Code Column -->
+              <ng-container matColumnDef="sitcode">
+                <mat-header-cell *matHeaderCellDef>Code</mat-header-cell>
+                <mat-cell *matCellDef="let site">{{ site.sitcode }}</mat-cell>
+              </ng-container>
+              <!-- Nom Column -->
+              <ng-container matColumnDef="sitlibl">
+                <mat-header-cell *matHeaderCellDef>Nom</mat-header-cell>
+                <mat-cell *matCellDef="let site">{{ site.sitlibl }}</mat-cell>
+              </ng-container>
+              <!-- Ville Column -->
+              <ng-container matColumnDef="sitville">
+                <mat-header-cell *matHeaderCellDef>Ville</mat-header-cell>
+                <mat-cell *matCellDef="let site">{{ site.sitville }}</mat-cell>
+              </ng-container>
+              <!-- Email Column -->
+              <ng-container matColumnDef="sitmail">
+                <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+                <mat-cell *matCellDef="let site">{{ site.sitmail }}</mat-cell>
+              </ng-container>
+               <!-- Email Column -->
+               <ng-container matColumnDef="Latitude">
+                <mat-header-cell *matHeaderCellDef>Latitude</mat-header-cell>
+                <mat-cell *matCellDef="let site">{{ site.Latitude }}</mat-cell>
+              </ng-container>
+               <!-- Email Column -->
+               <ng-container matColumnDef="Longitude">
+                <mat-header-cell *matHeaderCellDef>Longitude</mat-header-cell>
+                <mat-cell *matCellDef="let site">{{ site.Longitude }}</mat-cell>
+              </ng-container>
+              <!-- Actions Column -->
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                <mat-cell *matCellDef="let site">
+                  <button mat-icon-button class="action-button info" (click)="openDetails(site)">
+                    <mat-icon>info</mat-icon>
+                  </button>
+                  <button mat-icon-button class="action-button warning" (click)="openForm(site)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button class="action-button danger" (click)="deleteSite(site.id)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="['sitcode', 'sitlibl', 'sitville', 'sitmail', 'actions']"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: ['sitcode', 'sitlibl', 'sitville', 'sitmail', 'actions']"></mat-row>
+            </mat-table>
+          </div>
+          <!-- Map on the Right -->
+          <div class="map-container">
+            <div id="map" class="map"></div>
+          </div>
+        </div>
+      </mat-card-content>
+  
+  
+    <!-- Add/Edit Site Dialog -->
+    <ng-template #siteDialog>
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h2>{{ isEditing ? 'Modifier le site' : 'Ajouter un site' }}</h2>
+          <button mat-icon-button (click)="closeDialog()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <form [formGroup]="siteForm" (ngSubmit)="saveSite()" class="dialog-form">
+          <div class="form-grid">
+            <mat-form-field appearance="outline" *ngFor="let field of ['sitcode', 'sitlibl', 'sitville', 'sitmail', 'sitadr1', 'sitcp', 'sittel', 'sitfax', 'paycode', 'Latitude', 'Longitude']">
+              <mat-label>{{ fieldLabels[field] }}</mat-label>
+              <input matInput [formControlName]="field">
+              <mat-error *ngIf="siteForm.get(field)?.hasError('required')">Champ requis</mat-error>
+              <mat-error *ngIf="field === 'sitmail' && siteForm.get('sitmail')?.hasError('email')">Email invalide</mat-error>
+              <mat-error *ngIf="field === 'Latitude' && siteForm.get('Latitude')?.hasError('pattern')">Latitude doit être un nombre</mat-error>
+              <mat-error *ngIf="field === 'Longitude' && siteForm.get('Longitude')?.hasError('pattern')">Longitude doit être un nombre</mat-error>
+              <mat-error *ngIf="field === 'Latitude' && siteForm.get('Latitude')?.hasError('invalidCoordinate')">
+                Latitude doit être entre 30 et 38
+              </mat-error>
+              <mat-error *ngIf="field === 'Longitude' && siteForm.get('Longitude')?.hasError('invalidCoordinate')">
+                Longitude doit être entre 7 et 12
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <mat-checkbox formControlName="sitretour">Retour sur site</mat-checkbox>
+          <div class="form-actions">
+            <button mat-button class="cancel-button" (click)="closeDialog()">Fermer</button>
+            <button mat-raised-button class="save-button" type="submit" [disabled]="!siteForm.valid || isSaving">
+              <span *ngIf="!isSaving">Enregistrer</span>
+              <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
+            </button>
+          </div>
+        </form>
+      </div>
+    </ng-template>
+  
+    <!-- Details Dialog -->
+    <ng-template #detailsDialog>
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h2>Détails du site</h2>
+          <button mat-icon-button (click)="closeDialog()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <pre>{{ selectedSite | json }}</pre>
+        <div class="form-actions">
+          <button mat-button class="cancel-button" (click)="closeDialog()">Fermer</button>
+        </div>
+      </div>
+    </ng-template>

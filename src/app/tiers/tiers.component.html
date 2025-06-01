@@ -1,0 +1,164 @@
+
+  <mat-card-header class="card-header">
+    <mat-card-title class="card-title">
+      <mat-icon>groups</mat-icon>
+      Gestion des Tiers
+    </mat-card-title>
+    <span class="spacer"></span>
+    <button mat-raised-button class="add-button" (click)="openAddModal()">
+      <mat-icon>add</mat-icon>
+      Ajouter un Tier
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- Barre de recherche -->
+    <div class="search-container">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Rechercher par code ou nom...</mat-label>
+        <input matInput [(ngModel)]="searchTerm" name="searchTerm">
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <!-- Tableau -->
+    <mat-table [dataSource]="filteredTiers()" class="tiers-table">
+      <!-- Index Column -->
+      <ng-container matColumnDef="index">
+        <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+        <mat-cell *matCellDef="let tier; let i = index">{{ i + 1 }}</mat-cell>
+      </ng-container>
+
+      <!-- Code Principal Column -->
+      <ng-container matColumnDef="codePrincipal">
+        <mat-header-cell *matHeaderCellDef>Code Principal</mat-header-cell>
+        <mat-cell *matCellDef="let tier">{{ tier.codePrincipal }}</mat-cell>
+      </ng-container>
+
+      <!-- Nom Contact Column -->
+      <ng-container matColumnDef="nomContactPrincipal">
+        <mat-header-cell *matHeaderCellDef>Nom Contact</mat-header-cell>
+        <mat-cell *matCellDef="let tier">{{ tier.nomContactPrincipal }}</mat-cell>
+      </ng-container>
+
+      <!-- Code Pays Column -->
+      <ng-container matColumnDef="codePays">
+        <mat-header-cell *matHeaderCellDef>Code Pays</mat-header-cell>
+        <mat-cell *matCellDef="let tier">{{ tier.codePays }}</mat-cell>
+      </ng-container>
+
+      <!-- Date Création Column -->
+      <ng-container matColumnDef="dateCreation">
+        <mat-header-cell *matHeaderCellDef>Date Création</mat-header-cell>
+        <mat-cell *matCellDef="let tier">{{ tier.dateCreation }}</mat-cell>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+        <mat-cell *matCellDef="let tier">
+          <button mat-icon-button class="action-button view" (click)="openDetailsModal(tier)" matTooltip="Voir détails">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button class="action-button delete" (click)="openDeleteModal(tier)" matTooltip="Supprimer">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="['index', 'codePrincipal', 'nomContactPrincipal', 'codePays', 'dateCreation', 'actions']"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: ['index', 'codePrincipal', 'nomContactPrincipal', 'codePays', 'dateCreation', 'actions'];" class="table-row"></mat-row>
+    </mat-table>
+  </mat-card-content>
+
+
+<!-- Modal Ajout -->
+<div class="modal" *ngIf="showAddModal">
+  <div class="modal-backdrop" (click)="closeAddModal()">
+    <div class="modal-content-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h5 class="modal-title">Ajouter un Tier</h5>
+        <button mat-icon-button class="close-btn" (click)="closeAddModal()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #form="ngForm" class="modal-form">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Code Principal</mat-label>
+            <input matInput [(ngModel)]="newTier.codePrincipal" name="codePrincipal" required>
+            <mat-error *ngIf="form.controls['codePrincipal']?.invalid && (form.controls['codePrincipal']?.touched || form.controls['codePrincipal']?.dirty)">
+              Champ requis
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Nom Contact Principal</mat-label>
+            <input matInput [(ngModel)]="newTier.nomContactPrincipal" name="nomContactPrincipal" required>
+            <mat-error *ngIf="form.controls['nomContactPrincipal']?.invalid && (form.controls['nomContactPrincipal']?.touched || form.controls['nomContactPrincipal']?.dirty)">
+              Champ requis
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Code Pays</mat-label>
+            <input matInput [(ngModel)]="newTier.codePays" name="codePays" required>
+            <mat-error *ngIf="form.controls['codePays']?.invalid && (form.controls['codePays']?.touched || form.controls['codePays']?.dirty)">
+              Champ requis
+            </mat-error>
+          </mat-form-field>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button mat-button class="cancel-button" (click)="closeAddModal()">Annuler</button>
+        <button mat-raised-button class="save-button" (click)="createTier()" [disabled]="!form.valid">Créer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Détails -->
+<div class="modal" *ngIf="showDetails">
+  <div class="modal-backdrop" (click)="closeDetailsModal()">
+    <div class="modal-content-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h5 class="modal-title">Détails du Tier</h5>
+        <button mat-icon-button class="close-btn" (click)="closeDetailsModal()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="details-box">
+          <div class="details-content">
+            <p><strong>Code Principal :</strong> {{ selectedTier?.codePrincipal }}</p>
+            <p><strong>Nom Contact :</strong> {{ selectedTier?.nomContactPrincipal }}</p>
+            <p><strong>Code Pays :</strong> {{ selectedTier?.codePays }}</p>
+            <p><strong>Date Création :</strong> {{ selectedTier?.dateCreation }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button mat-button class="close-button" (click)="closeDetailsModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Suppression -->
+<div class="modal" *ngIf="showDelete">
+  <div class="modal-backdrop" (click)="closeDeleteModal()">
+    <div class="modal-content-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h5 class="modal-title">Supprimer le Tier</h5>
+        <button mat-icon-button class="close-btn" (click)="closeDeleteModal()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Êtes-vous sûr de vouloir supprimer le Tier <strong>{{ selectedTier?.codePrincipal }}</strong> ?</p>
+      </div>
+      <div class="modal-footer">
+        <button mat-button class="cancel-button" (click)="closeDeleteModal()">Annuler</button>
+        <button mat-raised-button class="delete-button" (click)="deleteTier()">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

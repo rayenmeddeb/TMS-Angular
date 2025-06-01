@@ -1,0 +1,271 @@
+<mat-card class="ot-card">
+  <mat-card-header class="card-header">
+    <mat-card-title class="card-title">
+      <mat-icon>list_alt</mat-icon>
+      Gestion des OTs
+    </mat-card-title>
+    <span class="spacer"></span>
+    <div class="counter-display" *ngIf="hasSelectedOrders()">
+      <span class="counter-item">
+        <mat-icon>view_comfy</mat-icon> Palettes: {{ totalPallets }}
+      </span>
+      <span class="counter-item">
+        <mat-icon>fitness_center</mat-icon> Poids: {{ totalWeight | number:'1.0-2' }} kg
+      </span>
+    </div>
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Rechercher un ordre...</mat-label>
+      <input matInput [(ngModel)]="searchTerm" name="searchTerm">
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+    <button mat-raised-button class="settings-button" (click)="showColumnSettings = true">
+      <mat-icon>tune</mat-icon> Personnaliser colonnes
+    </button>
+    <button mat-raised-button class="filter-button" (click)="showFilterPopup = true">
+      <mat-icon>filter_list</mat-icon> Filtrer les OTs
+    </button>
+    <button mat-raised-button class="planning-button" (click)="openPlanningPopup()" [disabled]="!hasSelectedOrders()">
+      <mat-icon>event</mat-icon> Planifier les OTs sélectionnés
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-table [dataSource]="filteredOrdres" class="ot-table">
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="toggleSelectAll($event)"></mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let ordre">
+          <mat-checkbox [(ngModel)]="ordre.selected" (click)="$event.stopPropagation()"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Dynamic Columns -->
+      <ng-container *ngFor="let col of availableColumns" [matColumnDef]="col.key">
+        <mat-header-cell *matHeaderCellDef [hidden]="!col.visible">{{ col.label }}</mat-header-cell>
+        <mat-cell *matCellDef="let ordre" [hidden]="!col.visible">
+          <ng-container [ngSwitch]="col.key">
+            <span *ngSwitchCase="'etatOrdre'" class="status-chip" [ngClass]="{
+              'status-warning': ordre.etatOrdre === 'NON_PLANIFIE',
+              'status-success': ordre.etatOrdre === 'PLANIFIE',
+              'status-danger': ordre.etatOrdre === 'ANNULEE'
+            }">
+              {{ ordre.etatOrdre }}
+            </span>
+            <span *ngSwitchCase="'dateCreation'">{{ ordre.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+            <span *ngSwitchDefault>{{ ordre[col.key] }}</span>
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+        <mat-cell *matCellDef="let ordre">
+          <button mat-icon-button class="action-button view" (click)="openOrderDetails(ordre); $event.stopPropagation()" matTooltip="Détails">
+            <mat-icon>visibility</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row" [ngClass]="{'selected-row': row.selected}" (click)="toggleRowSelection(row)"></mat-row>
+    </mat-table>
+  </mat-card-content>
+
+  <!-- Details Modal -->
+  <div class="modal" *ngIf="selectedOrder">
+    <div class="modal-backdrop" (click)="closeOrderDetails()">
+      <div class="modal-content-box" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h5 class="modal-title">Détails de l'Ordre {{ selectedOrder.numeroOrdre }}</h5>
+          <button mat-icon-button class="close-btn" (click)="closeOrderDetails()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="details-box">
+            <div class="details-content">
+              <h6>Informations de base</h6>
+              <p><strong>Type Ordre:</strong> {{ selectedOrder.typeOrdre }}</p>
+              <p><strong>Code AR:</strong> {{ selectedOrder.codeAR }}</p>
+              <p><strong>Code Document:</strong> {{ selectedOrder.codeDocument }}</p>
+              <p><strong>Type Document:</strong> {{ selectedOrder.typeDocument }}</p>
+              <p><strong>Type Abonnement:</strong> {{ selectedOrder.typeAbonnement }}</p>
+              <p><strong>Type Transport:</strong> {{ selectedOrder.typeTransport }}</p>
+              <p><strong>Type Remorque:</strong> {{ selectedOrder.typeRemorque }}</p>
+              <h6>Dates</h6>
+              <p><strong>Date Saisie:</strong> {{ selectedOrder.dateSaisie }}</p>
+              <p><strong>Date Création:</strong> {{ selectedOrder.dateCreation }}</p>
+              <p><strong>Date Modification:</strong> {{ selectedOrder.dateModification }}</p>
+              <p><strong>Date Validation:</strong> {{ selectedOrder.dateValidation1 }}</p>
+              <p><strong>Date Départ Prévue:</strong> {{ selectedOrder.dateDepartPrevue }}</p>
+              <p><strong>Date Fin Prévue:</strong> {{ selectedOrder.dateFinPrevue }}</p>
+              <h6>Localisation</h6>
+              <p><strong>Tiers:</strong> {{ selectedOrder.codeTiers }}</p>
+              <p><strong>Pays Départ:</strong> {{ selectedOrder.paysDepart }}</p>
+              <p><strong>Pays Arrivée:</strong> {{ selectedOrder.paysArrivee }}</p>
+              <p><strong>Région Départ:</strong> {{ selectedOrder.regionDepart }}</p>
+              <p><strong>Région Arrivée:</strong> {{ selectedOrder.regionArrivee }}</p>
+              <p><strong>Ville Départ:</strong> {{ selectedOrder.villeDepartNom }}</p>
+              <p><strong>Ville Arrivée:</strong> {{ selectedOrder.villeArriveeNom }}</p>
+              <h6>Transport</h6>
+              <p><strong>Code Tournée:</strong> {{ selectedOrder.codeTournee }}</p>
+              <p><strong>Code Voyage:</strong> {{ selectedOrder.codeVoyage }}</p>
+              <p><strong>Kilométrage:</strong> {{ selectedOrder.kilometrage1 }} km</p>
+              <p><strong>Temps Estimé:</strong> {{ selectedOrder.tempsEstimeTrajet }}</p>
+              <p><strong>Conditions Livraison:</strong> {{ selectedOrder.conditionsLivraison }}</p>
+              <p><strong>Conditions Prise en Charge:</strong> {{ selectedOrder.conditionsPriseEnCharge }}</p>
+              <h6>Facturation</h6>
+              <p><strong>Mode Règlement:</strong> {{ selectedOrder.modeReglement }}</p>
+              <p><strong>Montant Acompte:</strong> {{ selectedOrder.montantAcompte }}</p>
+              <p><strong>Code TVA:</strong> {{ selectedOrder.codeTVA }}</p>
+              <p><strong>Facturation Unique:</strong> {{ selectedOrder.facturationUnique ? 'Oui' : 'Non' }}</p>
+              <p><strong>A Facturer:</strong> {{ selectedOrder.aFacturer ? 'Oui' : 'Non' }}</p>
+              <h6>Autres informations</h6>
+              <p><strong>État Ordre:</strong> {{ selectedOrder.etatOrdre }}</p>
+              <p><strong>Validé:</strong> {{ selectedOrder.ordreValide ? 'Oui' : 'Non' }}</p>
+              <p><strong>Assigné à:</strong> {{ selectedOrder.assigneA }}</p>
+              <p><strong>Créé par:</strong> {{ selectedOrder.utilisateurCreateur }}</p>
+              <p><strong>Mémo:</strong> {{ selectedOrder.memo }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button mat-button class="close-button" (click)="closeOrderDetails()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Popup -->
+  <div class="modal" *ngIf="showFilterPopup">
+    <div class="modal-backdrop" (click)="showFilterPopup = false">
+      <div class="modal-content-box" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h5 class="modal-title">Filtres de recherche</h5>
+          <button mat-icon-button class="close-btn" (click)="showFilterPopup = false">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="modal-form">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Contrat</mat-label>
+              <input matInput [(ngModel)]="filter.contrat" name="contrat">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Code Site</mat-label>
+              <input matInput [(ngModel)]="filter.codeSite" name="codeSite">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Article</mat-label>
+              <input matInput [(ngModel)]="filter.codearticle" name="codearticle">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Numéro d'Ordre</mat-label>
+              <input matInput [(ngModel)]="filter.numeroOrdre" name="numeroOrdre">
+            </mat-form-field>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button mat-button class="cancel-button" (click)="resetFilters()">Réinitialiser</button>
+          <button mat-raised-button class="save-button" (click)="applyFilters()">Appliquer</button>
+          <button mat-button class="close-button" (click)="showFilterPopup = false">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Column Settings Popup -->
+  <div class="modal" *ngIf="showColumnSettings">
+    <div class="modal-backdrop" (click)="showColumnSettings = false">
+      <div class="modal-content-box" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h5 class="modal-title">Personnalisation des colonnes</h5>
+          <button mat-icon-button class="close-btn" (click)="showColumnSettings = false">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="checkboxes">
+            <div *ngFor="let col of availableColumns" class="checkbox-item">
+              <mat-checkbox [(ngModel)]="col.visible" [id]="col.key">
+                {{ col.label }}
+              </mat-checkbox>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button mat-button class="close-button" (click)="showColumnSettings = false">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Planning Popup -->
+  <div class="modal" *ngIf="showPlanningPopup">
+    <div class="modal-backdrop" (click)="showPlanningPopup = false">
+      <div class="modal-content-box" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h5 class="modal-title">Planification des OTs sélectionnés</h5>
+          <button mat-icon-button class="close-btn" (click)="showPlanningPopup = false">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="details-box">
+            <p><strong>Nombre d'OTs sélectionnés :</strong> {{ selectedOrders.length }}</p>
+            <p><strong>Total Palettes :</strong> {{ totalPallets }}</p>
+            <p><strong>Total Poids :</strong> {{ totalWeight | number:'1.0-2' }} kg</p>
+            <ul>
+              <li *ngFor="let ordre of selectedOrders">
+                OT N° {{ ordre.numeroOrdre }} - {{ ordre.codeSite }} (Palettes: {{ ordre.nbrepalette }}, Poids: {{ ordre.poid }} kg)
+              </li>
+            </ul>
+            <h6>Chauffeurs disponibles</h6>
+            <mat-table [dataSource]="chauffeurs" class="chauffeur-table">
+              <!-- Select Column -->
+              <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef>Sélectionner</mat-header-cell>
+                <mat-cell *matCellDef="let chauffeur">
+                  <mat-radio-button [checked]="selectedChauffeur?.id === chauffeur.id" (change)="selectChauffeur(chauffeur)"></mat-radio-button>
+                </mat-cell>
+              </ng-container>
+              <!-- Code Unique Column -->
+              <ng-container matColumnDef="codeUnique">
+                <mat-header-cell *matHeaderCellDef>Code Unique</mat-header-cell>
+                <mat-cell *matCellDef="let chauffeur">{{ chauffeur.codeUnique }}</mat-cell>
+              </ng-container>
+              <!-- Nom Column -->
+              <ng-container matColumnDef="nom">
+                <mat-header-cell *matHeaderCellDef>Nom</mat-header-cell>
+                <mat-cell *matCellDef="let chauffeur">{{ chauffeur.nom }}</mat-cell>
+              </ng-container>
+              <!-- Ville Residence Column -->
+              <ng-container matColumnDef="villeResidence">
+                <mat-header-cell *matHeaderCellDef>Ville Résidence</mat-header-cell>
+                <mat-cell *matCellDef="let chauffeur">{{ chauffeur.villeResidence }}</mat-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="['select', 'codeUnique', 'nom', 'villeResidence']"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: ['select', 'codeUnique', 'nom', 'villeResidence']"></mat-row>
+            </mat-table>
+            <p *ngIf="chauffeurs.length === 0">Aucun chauffeur disponible pour les critères sélectionnés.</p>
+            <form class="modal-form">
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Code Camion</mat-label>
+                <input matInput [(ngModel)]="planningData.codeCamion" name="codeCamion" required>
+                <mat-error *ngIf="!planningData.codeCamion">Champ requis</mat-error>
+              </mat-form-field>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button mat-button class="cancel-button" (click)="showPlanningPopup = false">Annuler</button>
+          <button mat-raised-button class="save-button" (click)="planifier()" [disabled]="!planningData.codeChauffeur || !planningData.codeCamion">Planifier</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-card>

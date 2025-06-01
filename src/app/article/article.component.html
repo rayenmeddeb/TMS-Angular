@@ -1,114 +1,132 @@
-<div class="articles-management-container">
-    <div class="header-section">
-      <h2 class="page-title"><i class="fas fa-box-open"></i> Gestion des Articles</h2>
-      <button class="btn btn-add" (click)="openModal()">
-        <i class="fas fa-plus"></i> Ajouter Article
-      </button>
-    </div>
-  
-    <div class="table-responsive">
-      <table class="articles-table">
-        <thead>
-          <tr>
-            <th>Code</th>
-            <th>Libellé</th>
-            <th>PU</th>
-            <th>Type</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let article of articles">
-            <td>{{ article.artCode }}</td>
-            <td>{{ article.artLibL }}</td>
-            <td>{{ article.artPu | number:'1.2-2' }} DT</td>
-            <td>{{ article.artType }}</td>
-            
-            <td class="actions-cell">
-              <button class="btn btn-view" (click)="openDetails(article)">
-                <i class="fas fa-eye"></i>
-              </button>
-              <button class="edit-btn" (click)="openModal(article)">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="delete-btn" (click)="deleteArticle(article.id!)">
-                <i class="fas fa-trash-alt"></i>
-              
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  
-    <!-- MODAL FORM -->
-    <div class="custom-modal" [class.show]="showModal" *ngIf="showModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3>{{ isEditMode ? 'Modifier' : 'Ajouter' }} un Article</h3>
-            <button class="close-btn" (click)="closeModal()">&times;</button>
-          </div>
-          <div class="modal-body">
-            <div class="form-row">
-              <div class="form-group">
-                <label>Code</label>
-                <input type="text" [(ngModel)]="selectedArticle!.artCode" class="form-control" />
-              </div>
-              <div class="form-group">
-                <label>Libellé</label>
-                <input type="text" [(ngModel)]="selectedArticle!.artLibL" class="form-control" />
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Prix Unitaire</label>
-                <input type="number" [(ngModel)]="selectedArticle!.artPu" class="form-control" />
-              </div>
-              <div class="form-group">
-                <label>Type</label>
-                <input type="text" [(ngModel)]="selectedArticle!.artType" class="form-control" />
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-cancel" (click)="closeModal()">Annuler</button>
-            <button class="btn btn-save" (click)="saveArticle()">Enregistrer</button>
-          </div>
-        </div>
+
+  <mat-card-header class="card-header">
+    <mat-card-title class="card-title">
+      <mat-icon>inventory_2</mat-icon>
+      {{ 'ARTICLES.TITLE' | translate }}
+    </mat-card-title>
+    <span class="spacer"></span>
+    <button mat-raised-button class="add-button" (click)="openModal()">
+      <mat-icon>add</mat-icon>
+      {{ 'ARTICLES.ADD_BUTTON' | translate }}
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-table [dataSource]="articles" class="articles-table">
+      <!-- Code Column -->
+      <ng-container matColumnDef="artCode">
+        <mat-header-cell *matHeaderCellDef>{{ 'ARTICLES.CODE' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let article">{{ article.artCode }}</mat-cell>
+      </ng-container>
+
+      <!-- Label Column -->
+ wilted flower
+      <ng-container matColumnDef="artLibL">
+        <mat-header-cell *matHeaderCellDef>{{ 'ARTICLES.LABEL' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let article">{{ article.artLibL }}</mat-cell>
+      </ng-container>
+
+      <!-- Price Column -->
+      <ng-container matColumnDef="artPu">
+        <mat-header-cell *matHeaderCellDef>{{ 'ARTICLES.PRICE' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let article">{{ article.artPu | number:'1.2-2' }} DT</mat-cell>
+      </ng-container>
+
+      <!-- Type Column -->
+      <ng-container matColumnDef="artType">
+        <mat-header-cell *matHeaderCellDef>{{ 'ARTICLES.TYPE' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let article">{{ article.artType }}</mat-cell>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>{{ 'ARTICLES.ACTIONS' | translate }}</mat-header-cell>
+        <mat-cell *matCellDef="let article">
+          <button mat-icon-button class="action-button view" (click)="openDetails(article)" matTooltip="{{ 'ARTICLES.VIEW' | translate }}">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button class="action-button edit" (click)="openModal(article)" matTooltip="{{ 'ARTICLES.EDIT' | translate }}">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button class="action-button delete" (click)="deleteArticle(article.id!)" matTooltip="{{ 'ARTICLES.DELETE' | translate }}">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="['artCode', 'artLibL', 'artPu', 'artType', 'actions']"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: ['artCode', 'artLibL', 'artPu', 'artType', 'actions'];" class="table-row"></mat-row>
+    </mat-table>
+  </mat-card-content>
+
+
+<!-- Modal Form -->
+<div class="modal" *ngIf="showModal">
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-content-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ isEditMode ? ('ARTICLES.MODAL.EDIT_TITLE' | translate) : ('ARTICLES.MODAL.ADD_TITLE' | translate) }}
+        </h5>
+        <button mat-icon-button class="close-btn" (click)="closeModal()">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
-    </div>
-  
-    <!-- MODAL DETAILS -->
-    <div class="custom-modal" [class.show]="showDetails" *ngIf="showDetails">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3>Détails de l'article</h3>
-            <button class="close-btn" (click)="closeModal()">&times;</button>
-          </div>
-          <div class="modal-body">
-            <div class="detail-item">
-              <span class="detail-label">Code:</span>
-              <span class="detail-value">{{ selectedArticle?.artCode }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Libellé:</span>
-              <span class="detail-value">{{ selectedArticle?.artLibL }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">PU:</span>
-              <span class="detail-value">{{ selectedArticle?.artPu }} DT</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Type:</span>
-              <span class="detail-value">{{ selectedArticle?.artType }}</span>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-close-details" (click)="closeModal()">Fermer</button>
-          </div>
-        </div>
+      <div class="modal-body">
+        <form class="modal-form">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'ARTICLES.MODAL.CODE' | translate }}</mat-label>
+            <input matInput [(ngModel)]="selectedArticle!.artCode" name="artCode" required>
+            <mat-error *ngIf="!selectedArticle?.artCode">Champ requis</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'ARTICLES.MODAL.LABEL' | translate }}</mat-label>
+            <input matInput [(ngModel)]="selectedArticle!.artLibL" name="artLibL" required>
+            <mat-error *ngIf="!selectedArticle?.artLibL">Champ requis</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'ARTICLES.MODAL.PRICE' | translate }}</mat-label>
+            <input matInput type="number" [(ngModel)]="selectedArticle!.artPu" name="artPu" required>
+            <mat-error *ngIf="!selectedArticle?.artPu">Champ requis</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'ARTICLES.MODAL.TYPE' | translate }}</mat-label>
+            <input matInput [(ngModel)]="selectedArticle!.artType" name="artType" required>
+            <mat-error *ngIf="!selectedArticle?.artType">Champ requis</mat-error>
+          </mat-form-field>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button mat-button class="cancel-button" (click)="closeModal()">{{ 'ARTICLES.MODAL.CANCEL' | translate }}</button>
+        <button mat-raised-button class="save-button" (click)="saveArticle()" [disabled]="!selectedArticle?.artCode || !selectedArticle?.artLibL || !selectedArticle?.artPu || !selectedArticle?.artType">{{ 'ARTICLES.MODAL.SAVE' | translate }}</button>
       </div>
     </div>
   </div>
+</div>
+
+<!-- Modal Details -->
+<div class="modal" *ngIf="showDetails">
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-content-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ 'ARTICLES.DETAILS.TITLE' | translate }}</h5>
+        <button mat-icon-button class="close-btn" (click)="closeModal()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="details-box">
+          <div class="details-content">
+            <p><strong>{{ 'ARTICLES.DETAILS.CODE' | translate }}:</strong> {{ selectedArticle?.artCode }}</p>
+            <p><strong>{{ 'ARTICLES.DETAILS.LABEL' | translate }}:</strong> {{ selectedArticle?.artLibL }}</p>
+            <p><strong>{{ 'ARTICLES.DETAILS.PRICE' | translate }}:</strong> {{ selectedArticle?.artPu }} DT</p>
+            <p><strong>{{ 'ARTICLES.DETAILS.TYPE' | translate }}:</strong> {{ selectedArticle?.artType }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button mat-button class="close-button" (click)="closeModal()">{{ 'ARTICLES.DETAILS.CLOSE' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>

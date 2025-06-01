@@ -1,74 +1,276 @@
-<!-- Liste des chauffeurs -->
-
- <header class="header">
-  <h1 class="title">Gestion Des Chauffeurs</h1>
-  <button class="btn btn-primary" (click)="isAddEditPopupVisible = true"><i class="fa-solid fa-user-plus"></i>Ajouter Chauffeur</button>
-</header>
-<div class="chauffeur-list">
-  
-
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Photo</th>
-        <th>Nom</th>
-        <th>codeUnique</th>
-        <th>Email</th>
-        <th>Téléphone</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let chauffeur of chauffeurs">
-        <td><img src="{{ chauffeur.photo }}" alt="{{ chauffeur.photo }}"></td>
-        <td>{{ chauffeur.nom }}</td>
-        <td>{{ chauffeur.codeUnique }}</td>
-        <td>{{ chauffeur.email }}</td>
-        <td>{{ chauffeur.telephone }}</td>
-        <td>
-          <button class="btn btn-info" (click)="viewDetails(chauffeur)"><i class="fa-solid fa-eye"></i></button>
-          <button class="btn btn-warning" (click)="onEdit(chauffeur)"><i class="fa-solid fa-pen-to-square"></i></button>
-          <button class="btn btn-danger" (click)="onDelete(chauffeur.id)"><i class="fa-solid fa-trash"></i></button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- Pop-up d'ajout/édition -->
-<div *ngIf="isAddEditPopupVisible" class="popup">
-  <div class="popup-content">
-    <h2>{{ selectedChauffeur ? 'Modifier Chauffeur' : 'Ajouter Chauffeur' }}</h2>
-    <form [formGroup]="chauffeurForm" (ngSubmit)="onSubmit()">
-      <label for="nom">Nom</label>
-      <input formControlName="nom" id="nom" required>
-      <label for="email">Code unique</label>
-      <input formControlName="codeUnique" id="codeUnique" required>
-      
-      <label for="email">Email</label>
-      <input formControlName="email" id="email" required>
-      
-      <label for="telephone">Téléphone</label>
-      <input formControlName="telephone" id="telephone" required>
-
-      <label for="photo">Photo</label>
-      <input type="file" (change)="onFileSelected($event)">
-
-      <button type="submit" class="btn btn-primary">Soumettre</button>
-      <button type="button" class="btn btn-secondary" (click)="closeAddEditPopup()">Annuler</button>
+<mat-card class="chauffeur-card">
+  <mat-card-header class="card-header">
+    <mat-card-title class="card-title">
+      <mat-icon>people</mat-icon>
+      Gestion des Chauffeurs
+    </mat-card-title>
+    <span class="spacer"></span>
+    <form [formGroup]="searchForm" class="search-form">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Rechercher par nom, code unique ou code site</mat-label>
+        <input matInput formControlName="searchQuery" placeholder="Saisir votre recherche">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
     </form>
+    <button mat-raised-button color="primary" (click)="isAddEditPopupVisible = true">
+      <mat-icon>add</mat-icon>
+      Ajouter Chauffeur
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-table [dataSource]="filteredChauffeurs" class="chauffeur-table">
+      <ng-container matColumnDef="photo">
+        <mat-header-cell *matHeaderCellDef>Photo</mat-header-cell>
+        <mat-cell *matCellDef="let chauffeur">
+          <img [src]="chauffeur.photo || 'assets/default-photo.png'" alt="Photo" class="chauffeur-photo">
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="nom">
+        <mat-header-cell *matHeaderCellDef>Nom</mat-header-cell>
+        <mat-cell *matCellDef="let chauffeur">{{ chauffeur.nom }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="codeUnique">
+        <mat-header-cell *matHeaderCellDef>Code Unique</mat-header-cell>
+        <mat-cell *matCellDef="let chauffeur">{{ chauffeur.codeUnique }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="codeSite">
+        <mat-header-cell *matHeaderCellDef>Code Site</mat-header-cell>
+        <mat-cell *matCellDef="let chauffeur">{{ chauffeur.codeSite }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="statut">
+        <mat-header-cell *matHeaderCellDef>Statut</mat-header-cell>
+        <mat-cell *matCellDef="let chauffeur">
+          <mat-chip [ngClass]="{
+            'statut-actif': chauffeur.statut === 'ACTIF',
+            'statut-non-actif': chauffeur.statut === 'NON_ACTIF',
+            'statut-en-conge': chauffeur.statut === 'EN_CONGE'
+          }">
+            {{ chauffeur.statut }}
+          </mat-chip>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+        <mat-cell *matCellDef="let chauffeur">{{ chauffeur.email }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="telephone">
+        <mat-header-cell *matHeaderCellDef>Téléphone</mat-header-cell>
+        <mat-cell *matCellDef="let chauffeur">{{ chauffeur.telephone }}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+        <mat-cell *matCellDef="let chauffeur">
+          <button mat-icon-button color="primary" (click)="viewDetails(chauffeur)" matTooltip="Voir détails">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" (click)="onEdit(chauffeur)" matTooltip="Modifier">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="onDelete(chauffeur.id)" matTooltip="Supprimer">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="['photo', 'nom', 'codeUnique', 'codeSite', 'statut', 'email', 'telephone', 'actions']"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: ['photo', 'nom', 'codeUnique', 'codeSite', 'statut', 'email', 'telephone', 'actions']"></mat-row>
+    </mat-table>
+  </mat-card-content>
+</mat-card>
+
+<!-- Add/Edit Popup -->
+<div *ngIf="isAddEditPopupVisible" class="modal">
+  <div class="modal-backdrop" (click)="closeAddEditPopup()">
+    <div class="modal-content-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ selectedChauffeur ? 'Modifier Chauffeur' : 'Ajouter Chauffeur' }}</h5>
+        <button mat-icon-button (click)="closeAddEditPopup()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="chauffeurForm" (ngSubmit)="onSubmit()" class="modal-form">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Code unique</mat-label>
+              <input matInput formControlName="codeUnique" required>
+              <mat-error *ngIf="chauffeurForm.get('codeUnique')?.hasError('required')">Champ requis</mat-error>
+              <mat-error *ngIf="chauffeurForm.get('codeUnique')?.hasError('minlength')">Minimum 8 caractères</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Nom</mat-label>
+              <input matInput formControlName="nom" required>
+              <mat-error *ngIf="chauffeurForm.get('nom')?.hasError('required')">Champ requis</mat-error>
+              <mat-error *ngIf="chauffeurForm.get('nom')?.hasError('minlength')">Minimum 2 caractères</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Ville de résidence</mat-label>
+              <input matInput formControlName="villeResidence" required>
+              <mat-error *ngIf="chauffeurForm.get('villeResidence')?.hasError('required')">Champ requis</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Code service</mat-label>
+              <input matInput formControlName="codeService" required>
+              <mat-error *ngIf="chauffeurForm.get('codeService')?.hasError('required')">Champ requis</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Code site</mat-label>
+              <input matInput formControlName="codeSite" required>
+              <mat-error *ngIf="chauffeurForm.get('codeSite')?.hasError('required')">Champ requis</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Date d'entrée</mat-label>
+              <input matInput type="date" formControlName="dateEntree" required>
+              <mat-error *ngIf="chauffeurForm.get('dateEntree')?.hasError('required')">Champ requis</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Date de naissance</mat-label>
+              <input matInput type="date" formControlName="dateNaissance" required>
+              <mat-error *ngIf="chauffeurForm.get('dateNaissance')?.hasError('required')">Champ requis</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" required>
+              <mat-error *ngIf="chauffeurForm.get('email')?.hasError('required')">Champ requis</mat-error>
+              <mat-error *ngIf="chauffeurForm.get('email')?.hasError('email')">Email invalide</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Téléphone</mat-label>
+              <input matInput formControlName="telephone" required>
+              <mat-error *ngIf="chauffeurForm.get('telephone')?.hasError('required')">Champ requis</mat-error>
+              <mat-error *ngIf="chauffeurForm.get('telephone')?.hasError('pattern')">Numéro invalide</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Téléphone professionnel</mat-label>
+              <input matInput formControlName="telephoneProfessionnel">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Identifiant externe</mat-label>
+              <input matInput formControlName="identifiantExterne">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Adresse</mat-label>
+              <input matInput formControlName="adresse" required>
+              <mat-error *ngIf="chauffeurForm.get('adresse')?.hasError('required')">Champ requis</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Adresse complémentaire</mat-label>
+              <input matInput formControlName="adresseComplementaire">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Code postal</mat-label>
+              <input matInput formControlName="codePostal" required>
+              <mat-error *ngIf="chauffeurForm.get('codePostal')?.hasError('required')">Champ requis</mat-error>
+              <mat-error *ngIf="chauffeurForm.get('codePostal')?.hasError('pattern')">5 chiffres requis</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Type d'emploi</mat-label>
+              <input matInput formControlName="typeEmploi" required>
+              <mat-error *ngIf="chauffeurForm.get('typeEmploi')?.hasError('required')">Champ requis</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Statut</mat-label>
+              <mat-select formControlName="statut" required>
+                <mat-option *ngFor="let statut of statutOptions" [value]="statut">{{ statut }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="chauffeurForm.get('statut')?.hasError('required')">Champ requis</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Situation professionnelle</mat-label>
+              <input matInput formControlName="situationProfessionnelle">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Numéro de permis</mat-label>
+              <input matInput formControlName="numeroPermis" required>
+              <mat-error *ngIf="chauffeurForm.get('numeroPermis')?.hasError('required')">Champ requis</mat-error>
+              <mat-error *ngIf="chauffeurForm.get('numeroPermis')?.hasError('minlength')">Minimum 5 caractères</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Kilométrage parcouru</mat-label>
+              <input matInput type="number" formControlName="kilometrageParcouru" required>
+              <mat-error *ngIf="chauffeurForm.get('kilometrageParcouru')?.hasError('required')">Champ requis</mat-error>
+              <mat-error *ngIf="chauffeurForm.get('kilometrageParcouru')?.hasError('min')">Doit être positif</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="modal-footer">
+            <button mat-button color="warn" type="button" (click)="closeAddEditPopup()">Annuler</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="!chauffeurForm.valid">Soumettre</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Pop-up des détails du chauffeur -->
-<div *ngIf="isDetailPopupVisible" class="popup">
-  <div class="popup-content">
-    <h2>Détails du Chauffeur</h2>
-    <p><strong>Nom:</strong> {{ selectedChauffeur.nom }}</p>
-    <p><strong>Email:</strong> {{ selectedChauffeur.email }}</p>
-    <p><strong>Téléphone:</strong> {{ selectedChauffeur.telephone }}</p>
-    <p><strong>Photo:</strong></p>
-    <img *ngIf="selectedChauffeur.photo" [src]="selectedChauffeur.photo" alt="photo" style="width: 150px;">
-    <button class="btn btn-secondary" (click)="closeDetailPopup()">Fermer</button>
+<!-- Details Popup -->
+<div *ngIf="isDetailPopupVisible" class="modal">
+  <div class="modal-backdrop" (click)="closeDetailPopup()">
+    <div class="modal-content-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h5 class="modal-title">Détails du Chauffeur</h5>
+        <button mat-icon-button (click)="closeDetailPopup()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="details-box">
+          <img *ngIf="selectedChauffeur?.photo" [src]="selectedChauffeur.photo" alt="Photo" class="chauffeur-img">
+          <div class="details-content">
+            <p><strong>Code unique:</strong> {{ selectedChauffeur?.codeUnique }}</p>
+            <p><strong>Nom:</strong> {{ selectedChauffeur?.nom }}</p>
+            <p><strong>Ville de résidence:</strong> {{ selectedChauffeur?.villeResidence }}</p>
+            <p><strong>Code service:</strong> {{ selectedChauffeur?.codeService }}</p>
+            <p><strong>Code site:</strong> {{ selectedChauffeur?.codeSite }}</p>
+            <p><strong>Date d'entrée:</strong> {{ selectedChauffeur?.dateEntree | date:'shortDate' }}</p>
+            <p><strong>Date de naissance:</strong> {{ selectedChauffeur?.dateNaissance | date:'shortDate' }}</p>
+            <p><strong>Email:</strong> {{ selectedChauffeur?.email }}</p>
+            <p><strong>Téléphone:</strong> {{ selectedChauffeur?.telephone }}</p>
+            <p><strong>Téléphone professionnel:</strong> {{ selectedChauffeur?.telephoneProfessionnel }}</p>
+            <p><strong>Identifiant externe:</strong> {{ selectedChauffeur?.identifiantExterne }}</p>
+            <p><strong>Adresse:</strong> {{ selectedChauffeur?.adresse }}</p>
+            <p><strong>Adresse complémentaire:</strong> {{ selectedChauffeur?.adresseComplementaire }}</p>
+            <p><strong>Code postal:</strong> {{ selectedChauffeur?.codePostal }}</p>
+            <p><strong>Type d'emploi:</strong> {{ selectedChauffeur?.typeEmploi }}</p>
+            <p><strong>Statut:</strong> {{ selectedChauffeur?.statut }}</p>
+            <p><strong>Situation professionnelle:</strong> {{ selectedChauffeur?.situationProfessionnelle }}</p>
+            <p><strong>Numéro de permis:</strong> {{ selectedChauffeur?.numeroPermis }}</p>
+            <p><strong>Kilométrage parcouru:</strong> {{ selectedChauffeur?.kilometrageParcouru }} km</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button mat-button color="primary" (click)="closeDetailPopup()">Fermer</button>
+      </div>
+    </div>
   </div>
 </div>

@@ -4,26 +4,28 @@
         <mat-icon>menu</mat-icon>
       </button>
       <div class="logo">
-        <img src="\assets\1744024818992_tm2-removebg-preview.png" alt="Logo" class="logo-image">
+       
         <span class="logo-text">Transport Management System</span>
       </div>
     </div>
     
     <div class="navbar-right">
+      <app-language-selector></app-language-selector>
       <button mat-icon-button class="notification-btn">
         <mat-icon>notifications</mat-icon>
         <span class="notification-badge">3</span>
       </button>
       
       <div class="user-profile">
-        <span class="username">{{userName}}</span>
+    
         <div
         class="user-icon"
-        [ngStyle]="{ 'background-color': getColor() }"
-      >
+      style=" background-color: #1e40af" >
         {{ getInitials() }}
       </div>
-       
+      <span class="username" routerLink="/layout/profil">{{userName}}</span>
+      
       </div>
+      <div style="color:#1e40af;position: relative; margin-top: 6.5px;"><h2 (click)="logout()"><i class="fa-solid fa-right-from-bracket"></i></h2></div>
     </div>
   </header>

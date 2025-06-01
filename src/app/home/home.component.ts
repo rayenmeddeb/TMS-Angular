@@ -12,13 +12,13 @@ export class HomeComponent {
       name: 'Tournés', 
       icon: 'fas fa-route fa-3x', 
       color: '#FF6B6B', 
-      route: '/tournees' 
+      route: '/layout/tourne' 
     },
     { 
       name: 'Ordres de transport', 
       icon: 'fas fa-truck-loading fa-3x', 
       color: '#4ECDC4', 
-      route: '/ordres-transport' 
+      route: '/layout/OT' 
     },
     { 
       name: 'Articles', 
@@ -36,7 +36,7 @@ export class HomeComponent {
       name: 'Clients', 
       icon: 'fas fa-user-tie fa-3x', 
       color: '#98D8C8', 
-      route: '/layout/client*' 
+      route: '/layout/client' 
     },
     { 
       name: 'Chauffeurs', 
@@ -58,7 +58,7 @@ export class HomeComponent {
     },
     { 
       name: 'Sites', 
-      icon: 'fas fa-map fa-3x', 
+      icon: 'fas fa-location fa-3x', 
       color: '#5d65ec', 
       route: '/layout/site' 
     },
